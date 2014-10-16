@@ -1,0 +1,25 @@
+default['chef-server']['repo1']['fqdn'] = 'repo.urasoko.com'
+default['chef-server']['repo1']['ipaddr'] = '10.110.42.200'
+default['chef-server']['repo2']['fqdn'] = ''
+default['chef-server']['repo2']['ipaddr'] = ''
+default['chef-server']['ap1']['fqdn'] = 'ap01.urasoko.com'
+default['chef-server']['ap1']['ipaddr'] = '10.110.42.201'
+default['chef-server']['ap2']['fqdn'] = ''
+default['chef-server']['ap2']['ipaddr'] = ''
+default['chef-server']['db1']['fqdn'] = 'db01.urasoko.com'
+default['chef-server']['db1']['ipaddr'] = '10.110.42.204'
+default['chef-server']['db2']['fqdn'] = ''
+default['chef-server']['db2']['ipaddr'] = ''
+
+default['chef-server']['db_vip']['fqdn'] = 'db01.urasoko.com'
+default['chef-server']['db_vip']['ipaddr'] = '10.110.42.204'
+default['chef-server']['api']['fqdn'] = 'ap01.urasoko.com'
+
+default['chef-server']['core']['package'] = 'chef-server-core-12.0.0_rc.4-1.el5.x86_64.rpm'
+default['chef-server']['core']['checksum'] = '119be4c0dad1128dbc46e6bdacf72711c8e29d346ad4f842a3b734e346eb18ae'
+default['chef-server']['manage']['package'] = 'opscode-manage-1.6.2-1.el6.x86_64.rpm'
+default['chef-server']['manage']['checksum'] = '59100815a5e86f2a9de6beb03605d1b90e93f5ef0eecf336222f46a7e29f340b'
+
+default['chef-server']['install_path'] = '/tmp'
+
+default['chef-server']['topology'] = 'tier'
