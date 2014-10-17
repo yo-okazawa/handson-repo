@@ -43,6 +43,12 @@ default['chef-server']['core']['package'] = 'chef-server-core-12.0.0_rc.4-1.el5.
 default['chef-server']['core']['checksum'] = '119be4c0dad1128dbc46e6bdacf72711c8e29d346ad4f842a3b734e346eb18ae'
 default['chef-server']['manage']['package'] = 'opscode-manage-1.6.2-1.el6.x86_64.rpm'
 default['chef-server']['manage']['checksum'] = '59100815a5e86f2a9de6beb03605d1b90e93f5ef0eecf336222f46a7e29f340b'
+default['chef-server']['push']['package'] = 'opscode-push-jobs-server-1.1.3-1.el6.x86_64.rpm'
+default['chef-server']['push']['checksum'] = '8234d84f06437a09890fa7184f16429cb4ff862913e60d434d48a1d865aea70c'
+default['chef-server']['sync']['package'] = 'chef-sync-1.0.0_rc.3-1.x86_64.rpm'
+default['chef-server']['sync']['checksum'] = '8c91c247ce07da02f56a05687dee69038deab4ba1637e8b9d10bbf83c1b0306d'
+default['chef-server']['report']['package'] = 'opscode-reporting-1.1.6-1.x86_64.rpm'
+default['chef-server']['report']['checksum'] = 'b9cf2bd2ea16f092a43f4abc8b5dbb6461761e9fb197ae20d09168cfd220bd10'
 
 default['chef-server']['install_path'] = '/tmp'
 
