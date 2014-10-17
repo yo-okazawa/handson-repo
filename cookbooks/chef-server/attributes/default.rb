@@ -1,3 +1,24 @@
+# KCPS2
+# default['chef-server']['repo1']['fqdn'] = 'tck2ejo2-chfrp01.tck2vm.local'
+# default['chef-server']['repo1']['ipaddr'] = '10.189.0.13'
+# default['chef-server']['repo2']['fqdn'] = ''
+# default['chef-server']['repo2']['ipaddr'] = ''
+# default['chef-server']['ap1']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
+# default['chef-server']['ap1']['ipaddr'] = '10.189.0.7'
+# default['chef-server']['ap2']['fqdn'] = ''
+# default['chef-server']['ap2']['ipaddr'] = ''
+# default['chef-server']['db1']['fqdn'] = 'tck2ejo2-chfdb01.tck2vm.local'
+# default['chef-server']['db1']['ipaddr'] = '10.189.0.8'
+# default['chef-server']['db2']['fqdn'] = ''
+# default['chef-server']['db2']['ipaddr'] = ''
+#
+# default['chef-server']['db_vip']['fqdn'] = 'tck2ejo2-chfdb01.tck2vm.local'
+# default['chef-server']['db_vip']['ipaddr'] = '10.189.0.8'
+# default['chef-server']['api']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
+#
+# default['chef-server']['lvm_physical_volume'] = '/dev/mapper/vgBoot02-LogVol00'
+
+# SL
 default['chef-server']['repo1']['fqdn'] = 'repo.urasoko.com'
 default['chef-server']['repo1']['ipaddr'] = '10.110.42.200'
 default['chef-server']['repo2']['fqdn'] = ''
@@ -7,13 +28,16 @@ default['chef-server']['ap1']['ipaddr'] = '10.110.42.201'
 default['chef-server']['ap2']['fqdn'] = ''
 default['chef-server']['ap2']['ipaddr'] = ''
 default['chef-server']['db1']['fqdn'] = 'db01.urasoko.com'
-default['chef-server']['db1']['ipaddr'] = '10.110.42.204'
+default['chef-server']['db1']['ipaddr'] = '10.110.42.205'
 default['chef-server']['db2']['fqdn'] = ''
 default['chef-server']['db2']['ipaddr'] = ''
 
 default['chef-server']['db_vip']['fqdn'] = 'db01.urasoko.com'
-default['chef-server']['db_vip']['ipaddr'] = '10.110.42.204'
+default['chef-server']['db_vip']['ipaddr'] = '10.110.42.205'
 default['chef-server']['api']['fqdn'] = 'ap01.urasoko.com'
+
+default['chef-server']['lvm_physical_volume'] = '/dev/xvdc'
+
 
 default['chef-server']['core']['package'] = 'chef-server-core-12.0.0_rc.4-1.el5.x86_64.rpm'
 default['chef-server']['core']['checksum'] = '119be4c0dad1128dbc46e6bdacf72711c8e29d346ad4f842a3b734e346eb18ae'
@@ -23,3 +47,12 @@ default['chef-server']['manage']['checksum'] = '59100815a5e86f2a9de6beb03605d1b9
 default['chef-server']['install_path'] = '/tmp'
 
 default['chef-server']['topology'] = 'tier'
+
+default['chef-server']['open4']['gem'] = 'open4-1.3.4.gem'
+default['chef-server']['lvm']['gem'] = 'di-ruby-lvm-0.1.3.gem'
+default['chef-server']['lvm_attr']['gem'] = 'di-ruby-lvm-attrib-0.0.14.gem'
+
+default['chef-server']['drbd84-utils']['package'] = 'drbd84-utils-8.9.1-1.el6.elrepo.x86_64.rpm'
+default['chef-server']['drbd84-utils']['checksum'] = '8cf2189f31ca619ddef8cc4f7faf49e5b99793abba35378189b5fbba1b71b3d3'
+default['chef-server']['kmod-drbd84']['package'] = 'kmod-drbd84-8.4.5-1.el6.elrepo.x86_64.rpm'
+default['chef-server']['kmod-drbd84']['checksum'] = 'dad4fa0710f5f3d385606495bfdfea98b41b2f6530894d2109c62a3d3fa0a04c'
