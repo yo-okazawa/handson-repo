@@ -43,4 +43,6 @@ rpm_package "#{node['chef-server']['core']['package']}" do
   source "#{node['chef-server']['install_path']}/#{node['chef-server']['core']['package']}"
 end
 
+execute "chef-server-ctl reconfigure"
+
 include_recipe "chef-server::post"

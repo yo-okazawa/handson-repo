@@ -4,6 +4,8 @@ rpm_package "#{node['chef-server']['core']['package']}" do
   source "#{node['chef-server']['install_path']}/#{node['chef-server']['core']['package']}"
 end
 
+execute "chef-server-ctl reconfigure"
+
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['manage']['package']}" do
   source "http://#{node['chef-server']['repo1']['fqdn']}/#{node['chef-server']['manage']['package']}"
   checksum "#{node['chef-server']['manage']['checksum']}"
