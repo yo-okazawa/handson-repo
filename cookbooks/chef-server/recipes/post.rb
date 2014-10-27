@@ -14,6 +14,6 @@ end
 
 execute "chef-server-ctl install chef-sync --path #{node['chef-server']['install_path']}"
 
-execute "chef-sync-ctl reconfigure"
+# execute "chef-sync-ctl reconfigure"
 
 execute "chef-server-ctl reconfigure"

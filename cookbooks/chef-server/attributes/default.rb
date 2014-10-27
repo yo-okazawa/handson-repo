@@ -1,21 +1,30 @@
+default['chef-server']['repo']['fqdn'] = ''
+default['chef-server']['repo']['ipaddr'] = ''
 default['chef-server']['repo1']['fqdn'] = 'tck2ejo2-chfrp01.tck2vm.local'
 default['chef-server']['repo1']['ipaddr'] = '10.189.0.13'
-default['chef-server']['repo2']['fqdn'] = ''
-default['chef-server']['repo2']['ipaddr'] = ''
+default['chef-server']['repo2']['fqdn'] = 'tck2ejo2-chfrp02.tck2vm.local'
+default['chef-server']['repo2']['ipaddr'] = '10.189.0.23'
 default['chef-server']['ap1']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
 default['chef-server']['ap1']['ipaddr'] = '10.189.0.7'
-default['chef-server']['ap2']['fqdn'] = ''
-default['chef-server']['ap2']['ipaddr'] = ''
+default['chef-server']['ap2']['fqdn'] = 'tck2ejo2-chfap02.tck2vm.local'
+default['chef-server']['ap2']['ipaddr'] = '10.189.0.14'
 default['chef-server']['db1']['fqdn'] = 'tck2ejo2-chfdb01.tck2vm.local'
 default['chef-server']['db1']['ipaddr'] = '10.189.0.8'
-default['chef-server']['db2']['fqdn'] = ''
-default['chef-server']['db2']['ipaddr'] = ''
+default['chef-server']['db2']['fqdn'] = 'tck2ejo2-chfdb02.tck2vm.local'
+default['chef-server']['db2']['ipaddr'] = '10.189.0.17'
 
-default['chef-server']['db_vip']['fqdn'] = 'tck2ejo2-chfdb01.tck2vm.local'
-default['chef-server']['db_vip']['ipaddr'] = '10.189.0.8'
+default['chef-server']['db_vip']['fqdn'] = 'tck2ejo2-chfdb.tck2vm.local'
+default['chef-server']['db_vip']['ipaddr'] = '10.189.0.27'
 default['chef-server']['api']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
 
+default['chef-server']['ws']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
+default['chef-server']['ws']['ipaddr'] = ''
+
+default['chef-server']['anltcs']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
+
 default['chef-server']['lvm_physical_volume'] = '/dev/mapper/vgBoot02-LogVol00'
+
+default['chef-server']['topology'] = 'ha'
 
 default['chef-server']['core']['package'] = 'chef-server-core-12.0.0_rc.5-1.el5.x86_64.rpm'
 default['chef-server']['core']['checksum'] = '9980361a764b7ba976924ab93c8935b8d4c2ef326b8c4a612df0061f90041901'
@@ -27,10 +36,10 @@ default['chef-server']['sync']['package'] = 'chef-sync-1.0.0_rc.3-1.x86_64.rpm'
 default['chef-server']['sync']['checksum'] = '8c91c247ce07da02f56a05687dee69038deab4ba1637e8b9d10bbf83c1b0306d'
 default['chef-server']['report']['package'] = 'opscode-reporting-1.1.6-1.x86_64.rpm'
 default['chef-server']['report']['checksum'] = 'b9cf2bd2ea16f092a43f4abc8b5dbb6461761e9fb197ae20d09168cfd220bd10'
+default['chef-server']['anltcs']['package'] = 'opscode-analytics-1.0.4-1.el6.x86_64.rpm'
+default['chef-server']['anltcs']['checksum'] = '0b818b0ca878f05059e945dfd0f07d5cd98dfb0e323e42f2e854b71446e29ded'
 
 default['chef-server']['install_path'] = '/tmp'
-
-default['chef-server']['topology'] = 'tier'
 
 default['chef-server']['open4']['gem'] = 'open4-1.3.4.gem'
 default['chef-server']['lvm']['gem'] = 'di-ruby-lvm-0.1.3.gem'
