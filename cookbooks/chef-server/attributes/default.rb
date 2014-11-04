@@ -1,4 +1,4 @@
-default['chef-server']['repo']['fqdn'] = ''
+default['chef-server']['repo']['fqdn'] = 'tck2ejo2-chfrp.tck2vm.local'
 default['chef-server']['repo']['ipaddr'] = ''
 default['chef-server']['repo1']['fqdn'] = 'tck2ejo2-chfrp01.tck2vm.local'
 default['chef-server']['repo1']['ipaddr'] = '10.189.0.13'
@@ -15,10 +15,13 @@ default['chef-server']['db2']['ipaddr'] = '10.189.0.17'
 
 default['chef-server']['db_vip']['fqdn'] = 'tck2ejo2-chfdb.tck2vm.local'
 default['chef-server']['db_vip']['ipaddr'] = '10.189.0.27'
-default['chef-server']['api']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
+default['chef-server']['db_vip']['device'] = 'eth1'
+
+default['chef-server']['api']['fqdn'] = 'tck2ejo2-chfap.tck2vm.local'
+default['chef-server']['api']['ip'] = ''
 
 default['chef-server']['ws']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
-default['chef-server']['ws']['ipaddr'] = ''
+default['chef-server']['ws']['ipaddr'] = '198.18.0.13'
 
 default['chef-server']['anltcs']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
 

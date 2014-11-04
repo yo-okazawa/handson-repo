@@ -10,7 +10,8 @@ server "<%= node['chef-server']['db2']['fqdn'] %>",
   :role => "backend"
 
 backend_vip "<%= node['chef-server']['db_vip']['fqdn'] %>",
-  :ipaddress => "<%= node['chef-server']['db_vip']['ipaddr'] %>"
+  :ipaddress => "<%= node['chef-server']['db_vip']['ipaddr'] %>",
+  :device => "<%= node['chef-server']['db_vip']['device'] %>"
 
 server "<%= node['chef-server']['ap1']['fqdn'] %>",
   :ipaddress => "<%= node['chef-server']['ap1']['ipaddr'] %>",
@@ -21,7 +22,6 @@ server "<%= node['chef-server']['ap2']['fqdn'] %>",
   :role => "frontend"
 
 api_fqdn "<%= node['chef-server']['api']['fqdn'] %>"
-
 
 dark_launch['actions'] = true
 rabbitmq['ha'] = true
