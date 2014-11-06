@@ -1,9 +1,9 @@
-default['chef-server']['repo']['fqdn'] = 'tck2ejo2-chfrp.tck2vm.local'
-default['chef-server']['repo']['ipaddr'] = ''
 default['chef-server']['repo1']['fqdn'] = 'tck2ejo2-chfrp01.tck2vm.local'
 default['chef-server']['repo1']['ipaddr'] = '10.189.0.13'
 default['chef-server']['repo2']['fqdn'] = 'tck2ejo2-chfrp02.tck2vm.local'
 default['chef-server']['repo2']['ipaddr'] = '10.189.0.23'
+default['chef-server']['repo']['fqdn'] = default['chef-server']['repo1']['fqdn']
+default['chef-server']['repo']['ipaddr'] = default['chef-server']['repo1']['ipaddr']
 default['chef-server']['ap1']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
 default['chef-server']['ap1']['ipaddr'] = '10.189.0.7'
 default['chef-server']['ap2']['fqdn'] = 'tck2ejo2-chfap02.tck2vm.local'
@@ -23,9 +23,9 @@ default['chef-server']['api']['ip'] = ''
 default['chef-server']['ws']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
 default['chef-server']['ws']['ipaddr'] = '198.18.0.13'
 
-default['chef-server']['anltcs']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
-
 default['chef-server']['lvm_physical_volume'] = '/dev/mapper/vgBoot02-LogVol00'
+
+default['chef-server']['anltcs']['fqdn'] = default['chef-server']['ws']['fqdn']
 
 default['chef-server']['topology'] = 'ha'
 
@@ -46,7 +46,7 @@ default['chef-server']['install_path'] = '/tmp'
 
 default['chef-server']['open4']['gem'] = 'open4-1.3.4.gem'
 default['chef-server']['lvm']['gem'] = 'di-ruby-lvm-0.1.3.gem'
-default['chef-server']['lvm_attr']['gem'] = 'di-ruby-lvm-attrib-0.0.14.gem'
+default['chef-server']['lvm_attr']['gem'] = 'di-ruby-lvm-attrib-0.0.16.gem'
 
 default['chef-server']['drbd84-utils']['package'] = 'drbd84-utils-8.9.1-1.el6.elrepo.x86_64.rpm'
 default['chef-server']['drbd84-utils']['checksum'] = '8cf2189f31ca619ddef8cc4f7faf49e5b99793abba35378189b5fbba1b71b3d3'

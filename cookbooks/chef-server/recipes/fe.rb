@@ -7,7 +7,7 @@ end
 execute "chef-server-ctl reconfigure"
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['manage']['package']}" do
-  source "http://#{node['chef-server']['repo1']['fqdn']}/#{node['chef-server']['manage']['package']}"
+  source "http://#{node['chef-server']['repo']['fqdn']}/#{node['chef-server']['manage']['package']}"
   checksum "#{node['chef-server']['manage']['checksum']}"
 end
 
@@ -16,7 +16,7 @@ execute "chef-server-ctl install opscode-manage --path #{node['chef-server']['in
 execute "opscode-manage-ctl reconfigure"
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['report']['package']}" do
-  source "http://#{node['chef-server']['repo1']['fqdn']}/#{node['chef-server']['report']['package']}"
+  source "http://#{node['chef-server']['repo']['fqdn']}/#{node['chef-server']['report']['package']}"
   checksum "#{node['chef-server']['report']['checksum']}"
 end
 
