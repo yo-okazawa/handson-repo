@@ -1,7 +1,7 @@
 execute 'yum update -y'
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['anltcs']['package']}" do
-  source "http://#{node['chef-server']['repo']['fqdn']}/#{node['chef-server']['anltcs']['package']}"
+  source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['anltcs']['package']}"
   checksum "#{node['chef-server']['anltcs']['checksum']}"
 end
 
