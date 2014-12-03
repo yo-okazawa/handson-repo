@@ -1,0 +1,41 @@
+{
+  "name": "cl_dev",
+  "default_attributes": {
+    "chef-server": {
+      "repo": {
+        "url":"repo.urasoko.com\/packages"
+      },
+      "ap1": {
+        "fqdn":"ap01.urasoko.com",
+        "ipaddr":"10.110.42.204"
+      },
+      "ap2": {
+        "fqdn":"ap02.urasoko.com",
+        "ipaddr":"10.110.42.205"
+      },
+      "db1": {
+        "fqdn":"db01.urasoko.com",
+        "ipaddr":"10.110.42.195"
+      },
+      "db2": {
+        "fqdn":"db02.urasoko.com",
+        "ipaddr":"10.110.42.201"
+      },
+      "db_vip": {
+        "fqdn":"db.urasoko.com",
+        "ipaddr":"10.110.10.14",
+        "device":"eth0"
+      },
+      "api": {
+        "fqdn":"10.110.42.207"
+      },
+      "ws": {
+        "fqdn":"ws01.urasoko.com"
+      },
+      "kmod-drbd84": {
+        "package":"kmod-drbd84-8.4.5-2.el6.elrepo.x86_64.rpm",
+        "checksum":"388e5478c3606ec84e16122c047017ef89f5667c4c18dfdfa5e34f9c7a65d240"
+      }
+    }
+  }
+}

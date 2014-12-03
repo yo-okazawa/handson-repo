@@ -1,26 +1,3 @@
-default['chef-server']['repo1']['fqdn'] = 'tck2ejo2-chfrp01.tck2vm.local'
-default['chef-server']['repo2']['fqdn'] = 'tck2ejo2-chfrp02.tck2vm.local'
-default['chef-server']['repo']['url'] = "#{default['chef-server']['repo1']['fqdn']}/packages"
-default['chef-server']['ap1']['fqdn'] = 'tck2ejo2-chfap01.tck2vm.local'
-default['chef-server']['ap1']['ipaddr'] = '10.189.0.7'
-default['chef-server']['ap2']['fqdn'] = 'tck2ejo2-chfap02.tck2vm.local'
-default['chef-server']['ap2']['ipaddr'] = '10.189.0.14'
-default['chef-server']['db1']['fqdn'] = 'tck2ejo2-chfdb01.tck2vm.local'
-default['chef-server']['db1']['ipaddr'] = '10.189.0.8'
-default['chef-server']['db2']['fqdn'] = 'tck2ejo2-chfdb02.tck2vm.local'
-default['chef-server']['db2']['ipaddr'] = '10.189.0.17'
-
-default['chef-server']['db_vip']['fqdn'] = 'tck2ejo2-chfdb.tck2vm.local'
-default['chef-server']['db_vip']['ipaddr'] = '10.189.0.27'
-default['chef-server']['db_vip']['device'] = 'eth1'
-
-default['chef-server']['api']['fqdn'] = default['chef-server']['ap1']['fqdn']
-
-default['chef-server']['ws']['fqdn'] = 'tck2ejo2-chfws01.tck2vm.local'
-
-default['chef-server']['kmod-drbd84']['package'] = 'kmod-drbd84-8.4.5-1.el6.elrepo.x86_64.rpm'
-default['chef-server']['kmod-drbd84']['checksum'] = 'dad4fa0710f5f3d385606495bfdfea98b41b2f6530894d2109c62a3d3fa0a04c'
-
 default['chef-server']['anltcs']['fqdn'] = default['chef-server']['ws']['fqdn']
 
 default['chef-server']['topology'] = 'ha'

@@ -1,0 +1,41 @@
+{
+  "name": "imai",
+  "default_attributes": {
+    "chef-server": {
+      "repo": {
+        "url":"ck2wjih-vcfrp01.ck2vmw1.local\/packages"
+      },
+      "ap1": {
+        "fqdn":"ck2wjih-vcfap01.ck2vmw1.local",
+        "ipaddr":"10.196.12.4"
+      },
+      "ap2": {
+        "fqdn":"ck2wjih-vcfap02.ck2vmw1.local",
+        "ipaddr":"10.196.12.5"
+      },
+      "db1": {
+        "fqdn":"ck2wjih-vcfdb01.ck2vmw1.local",
+        "ipaddr":"10.196.12.6"
+      },
+      "db2": {
+        "fqdn":"ck2wjih-vcfdb02.ck2vmw1.local",
+        "ipaddr":"10.196.12.7"
+      },
+      "db_vip": {
+        "fqdn":"ck2wjih-vcfdb00s.ck2vmw1.local",
+        "ipaddr":"10.196.12.35",
+        "device":"eth1"
+      },
+      "api": {
+        "fqdn":"ck2wjih-vcfap00s.ck2vmw1.local"
+      },
+      "ws": {
+        "fqdn":"ck2wjih-vcfws01.ck2vmw1.local"
+      },
+      "kmod-drbd84": {
+        "package":"kmod-drbd84-8.4.5-1.el6.elrepo.x86_64.rpm",
+        "checksum":"dad4fa0710f5f3d385606495bfdfea98b41b2f6530894d2109c62a3d3fa0a04c"
+      }
+    }
+  }
+}
