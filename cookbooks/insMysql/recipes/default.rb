@@ -22,6 +22,15 @@
   
 end
 
+#use tamplate
+template "my.cnf" do
+ path "/etc/my.cnf"
+ owner "root"
+ group "root"
+ mode 0644
+ notifies :reload, 'service[mysql]'
+end
+
 #service mysql start
 service "mysql" do
   action [ :enable, :start ]
