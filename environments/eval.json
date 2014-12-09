@@ -29,7 +29,7 @@
       "api": {
         "fqdn":"tck2ejo2-chfap01.tck2vm.local"
       },
-      "ws": {
+      "anltcs": {
         "fqdn":"tck2ejo2-chfws01.tck2vm.local"
       },
       "kmod-drbd84": {

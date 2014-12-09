@@ -27,9 +27,9 @@
         "device":"eth1"
       },
       "api": {
-        "fqdn":"ck2wjih-vcfap00s.ck2vmw1.local"
+        "fqdn":"ck2wjih-vcfap01.ck2vmw1.local"
       },
-      "ws": {
+      "anltcs": {
         "fqdn":"ck2wjih-vcfws01.ck2vmw1.local"
       },
       "kmod-drbd84": {
