@@ -2,12 +2,11 @@
 # Cookbook Name:: insMysql
 # Recipe:: default
 #
-
-["shared-compat","client","server"].each do |rpmStr|
+node["mysql"]["rpmList"].each do |rpmFile|
 
   #get rpm from repoServer
-  remote_file "/tmp/MySQL-#{rpmStr}-5.5.30-1.el6.x86_64.rpm" do
-    source "http://10.110.42.200/packages/MySQL-#{rpmStr}-5.5.30-1.el6.x86_64.rpm"
+  remote_file "#{node["target"]["insDir"]}/#{rpmFile}" do
+    source "#{node["repo"]["url"]}/#{rpmFile}"
     owner "root"
     group "root"
     mode 0644
@@ -15,13 +14,32 @@
   end
   
   #install local rpm
-  package "/tmp/MySQL-#{rpmStr}-5.5.30-1.el6.x86_64.rpm" do
-    source "/tmp/MySQL-#{rpmStr}-5.5.30-1.el6.x86_64.rpm"
+  rpm_package "#{node["target"]["insDir"]}/#{rpmFile}" do
+    source "#{node["target"]["insDir"]}/#{rpmFile}"
     action :install
   end
   
 end
 
+#use cookbook_file
+cookbook_file "#{node["mysql"]["cnfFile"]}" do
+  path "#{node["mysql"]["cnfDir"]}/#{node["mysql"]["cnfFile"]}"
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
+  notifies :reload, 'service[mysql]'
+end
+
+#service mysql start
+service "mysql" do
+  action [ :enable, :start ]
+end
+
+
+
+
+=begin
 #use tamplate
 template "my.cnf" do
  path "/etc/my.cnf"
@@ -30,11 +48,7 @@ template "my.cnf" do
  mode 0644
  notifies :reload, 'service[mysql]'
 end
-
-#service mysql start
-service "mysql" do
-  action [ :enable, :start ]
-end
+=end
 
 #----------------second test----------------
 =begin
