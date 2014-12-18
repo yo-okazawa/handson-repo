@@ -1,5 +1,10 @@
 include_recipe "chef-server::pre"
 
+template '/etc/opscode/chef-server.rb' do
+  source 'chef-server.rb.erb'
+  variables({:api_fqdn => node['fqdn']})
+end
+
 rpm_package "#{node['chef-server']['core']['package']}" do
   source "#{node['chef-server']['install_path']}/#{node['chef-server']['core']['package']}"
 end
