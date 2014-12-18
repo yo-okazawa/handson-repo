@@ -21,7 +21,7 @@ server "<%= node['chef-server']['ap2']['fqdn'] %>",
   :ipaddress => "<%= node['chef-server']['ap2']['ipaddr'] %>",
   :role => "frontend"
 
-api_fqdn "<%= node['chef-server']['api']['fqdn'] %>"
+api_fqdn "<%= @api_fqdn %>"
 
 dark_launch['actions'] = true
 rabbitmq['ha'] = true

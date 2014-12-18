@@ -6,7 +6,3 @@ remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['core'
 end
 
 directory '/etc/opscode'
-
-template '/etc/opscode/chef-server.rb' do
-  source 'chef-server.rb.erb'
-end
