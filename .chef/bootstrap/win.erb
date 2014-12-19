@@ -107,10 +107,24 @@ goto install
 :install
 @rem Install Chef using chef-client MSI installer
 
-<% repo_url="http://10.110.42.200/" -%>
-<% msi="chef-windows-11.16.4-1.windows.msi" -%>
-<% url=repo_url+msi -%>
-@set "REMOTE_SOURCE_MSI_URL=<%= url %>"
+@rem <REPO_URL AND chef_server_url SET select>
+<% case @chef_config[:environment] %>
+<% when "cl_dev" then %>
+  @set REPO_URL="http://10.110.42.200/packages/"
+  @set BOOTSTRAP_WGET_OPTION="--no-check-certificate"
+  <% CHEF_SERVER_URL="chef_server_url  \"https://chef.urasoko.com/organizations/cl_dev\"" -%>
+  <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
+<% when "eval" then %>
+<% when "imai" then %>
+<% when "oyam" then %>
+<% else %>
+  @echo "ERR:environment is not specified, use -E <enviroment>"
+<% end %>
+@rem </REPO_URL AND chef_server_url SET select>
+  
+<% msi="chef-client-12.0.3-1.msi" -%>
+
+@set "REMOTE_SOURCE_MSI_URL=%REPO_URL%<%= msi %>"
 @set "LOCAL_DESTINATION_MSI_PATH=<%= local_download_path %>"
 @set "CHEF_CLIENT_MSI_LOG_PATH=%TEMP%\chef-client-msi%RANDOM%.log"
 @set "FALLBACK_QUERY_STRING=&DownloadContext=PowerShell"
@@ -212,6 +226,8 @@ mkdir <%= bootstrap_directory %>\ohai\hints
 
 > <%= bootstrap_directory %>\client.rb (
  <%= config_content %>
+ <%= escape_and_echo(SSL_VERIFY_MODE) %>
+ <%= escape_and_echo(CHEF_SERVER_URL) %>
 )
 
 > <%= bootstrap_directory %>\first-boot.json (
