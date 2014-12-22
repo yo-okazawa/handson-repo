@@ -1,6 +1,70 @@
 bash -c '
 <%= "export https_proxy=\"#{knife_config[:bootstrap_proxy]}\"" if knife_config[:bootstrap_proxy] -%>
 
+#<global-configuration>
+
+  <% case @chef_config[:environment] %>
+  <% when "cl_dev" then %>
+    <% CHEF_SERVER_NAME="chef.urasoko.com" -%>
+    <% CHEF_SERVER_IP="10.110.42.207" -%>
+    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/cl_dev\"" -%>
+    <% REPO_SERVER_NAME="repo.urasoko.com" -%>
+    <% REPO_SERVER_IP="10.110.42.200" -%>
+    <% REPO_URL="http://#{REPO_SERVER_NAME}/packages/" -%>
+    <% BOOTSTRAP_WGET_OPTION="" -%>
+    <% SSL_VERIFY_MODE="" -%>
+  <% when "eval" then %>
+    <% CHEF_SERVER_NAME="ck2ejo2-chfap00s.tck2vm.local" -%>
+    <% CHEF_SERVER_IP="198.18.0.14" -%>
+    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
+    <% REPO_SERVER_NAME="ck2ejo2-chfrp00s.tck2vm.local" -%>
+    <% REPO_SERVER_IP="198.18.0.15" -%>
+    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
+    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
+    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
+  <% when "imai" then %>
+    <% CHEF_SERVER_NAME="ck2wjih-vcfap00s" -%>
+    <% CHEF_SERVER_IP="198.18.0.14" -%>
+    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
+    <% REPO_SERVER_NAME="ck2wjih-vcfrp00s" -%>
+    <% REPO_SERVER_IP="198.18.0.15" -%>
+    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
+    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
+    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
+  <% when "oyam" then %>
+    <% CHEF_SERVER_NAME="ck2ejo2-vcfap00s.ck2vme1.local" -%>
+    <% CHEF_SERVER_IP="198.18.0.14" -%>
+    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
+    <% REPO_SERVER_NAME="ck2ejo2-vcfrp00s.ck2vme1.local" -%>
+    <% REPO_SERVER_IP="198.18.0.15" -%>
+    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
+    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
+    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
+  <% else %>
+    echo "ERR: global-configuration environment is not specified, use -E <enviroment>"
+  <% end %>
+
+#</global-configuration>
+
+#<regist hosts>
+
+  <% CHEF_HOSTS_STR="#{CHEF_SERVER_IP} #{CHEF_SERVER_NAME}" -%>
+  if cat /etc/hosts | grep -q "<%= "#{CHEF_HOSTS_STR}" %>" ; then
+    echo "regist hosts: CHEF-hosts is already registered" > /dev/null
+  else
+    echo "<%= "#{CHEF_HOSTS_STR}" %>" >> /etc/hosts
+  fi
+  
+  <% REPO_HOSTS_STR="#{REPO_SERVER_IP} #{REPO_SERVER_NAME}" -%>
+  
+  if cat /etc/hosts | grep -q "<%= "#{REPO_HOSTS_STR}" %>" ; then
+    echo "regist hosts: REPO-hosts is already registered" > /dev/null
+  else
+    echo "<%= "#{REPO_HOSTS_STR}" %>" >> /etc/hosts
+  fi
+
+#</regist hosts>
+
 distro=`uname -s`
 
 if test "x$distro" = "xSunOS"; then
@@ -23,40 +87,17 @@ exists() {
   <%= knife_config[:bootstrap_install_command] %>
 <% else %>
 
-  #<REPO_URL AND chef_server_url SET select>
-  <% case @chef_config[:environment] %>
-  <% when "cl_dev" then %>
-    REPO_URL="http://10.110.42.200/packages/"
-    BOOTSTRAP_WGET_OPTION="--no-check-certificate"
-    CHEF_SERVER_URL="chef_server_url  \"https://ap01.urasoko.com/organizations/cl_dev\""
-#    SSL_VERIFY_MODE="ssl_verify_mode :verify_none"
-  <% when "eval" then %>
-    REPO_URL="https://198.18.0.15/packages/"
-    BOOTSTRAP_WGET_OPTION="--no-check-certificate"
-    CHEF_SERVER_URL="chef_server_url \"https://198.18.0.14/organizations/ckkcl\""
-    SSL_VERIFY_MODE="ssl_verify_mode :verify_none"
-  <% when "imai" then %>
-    REPO_URL="https://198.18.0.15/packages/"
-    BOOTSTRAP_WGET_OPTION="--no-check-certificate"
-    CHEF_SERVER_URL="chef_server_url  \"https://198.18.0.14/organizations/ckkcl\""
-    SSL_VERIFY_MODE="ssl_verify_mode :verify_none"
-  <% when "oyam" then %>
-    REPO_URL="https://198.18.0.15/packages/"
-    CHEF_SERVER_URL="chef_server_url  \"https://198.18.0.14/organizations/ckkcl\""
-    SSL_VERIFY_MODE="ssl_verify_mode :verify_none"
-  <% else %>
-    echo "ERR:environment is not specified, use -E <enviroment>"
-  <% end %>
-  #</REPO_URL AND chef_server_url SET select>
-  
   if ! exists /usr/bin/chef-client; then
     CHEF_PACKAGE="chef-12.0.3-1.x86_64.rpm"
-    PACKAGE_URL=$REPO_URL$CHEF_PACKAGE
+    PACKAGE_URL=<%= "#{REPO_URL}" %>$CHEF_PACKAGE
+    BTW_OPTION=<%= "#{BOOTSTRAP_WGET_OPTION}" %>
     echo "Installing Chef Client..."
     if exists wget; then
-      bash <(wget ${BOOTSTRAP_WGET_OPTION} $PACKAGE_URL -O /tmp/chef-client-package.rpm)
+      bash <(wget $BTW_OPTION $PACKAGE_URL -O /tmp/chef-client-package.rpm)
+      rpm -Uvh /tmp/chef-client-package.rpm
     elif exists curl; then
       bash <(curl $PACKAGE_URL -O /tmp/chef-client-package.rpm)
+      rpm -Uvh /tmp/chef-client-package.rpme
     else
       echo "Neither wget nor curl found. Please install one and try again." >&2
       exit 1
@@ -97,9 +138,9 @@ EOP
 
 cat > /etc/chef/client.rb <<'EOP'
 <%= config_content %>
+<%= "#{SSL_VERIFY_MODE}" %>
+<%= "#{CHEF_SERVER_URL}" %>
 EOP
-echo ${CHEF_SERVER_URL} >> /etc/chef/client.rb
-echo ${SSL_VERIFY_MODE} >> /etc/chef/client.rb
 
 cat > /etc/chef/first-boot.json <<'EOP'
 <%= Chef::JSONCompat.to_json(first_boot) %>
