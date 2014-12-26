@@ -27,7 +27,7 @@
         "device":"eth1"
       },
       "api": {
-        "fqdn":"tck2ejo2-chfap01.tck2vm.local"
+        "fqdn":"ck2ejo2-chfap00s.tck2vm.local"
       },
       "anltcs": {
         "fqdn":"10.189.0.18"
