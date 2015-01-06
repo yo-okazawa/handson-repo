@@ -3,45 +3,41 @@ bash -c '
 
 #<global-configuration>
 
-  <% case @chef_config[:environment] %>
-  <% when "cl_dev" then %>
+  <% case @chef_config[:chef_server_url] %>
+  <% when /.*chef.urasoko.com.*/ then %>
     <% CHEF_SERVER_NAME="chef.urasoko.com" -%>
     <% CHEF_SERVER_IP="10.110.42.207" -%>
-    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/cl_dev\"" -%>
     <% REPO_SERVER_NAME="repo.urasoko.com" -%>
     <% REPO_SERVER_IP="10.110.42.200" -%>
     <% REPO_URL="http://#{REPO_SERVER_NAME}/packages/" -%>
     <% BOOTSTRAP_WGET_OPTION="" -%>
-    <% SSL_VERIFY_MODE="" -%>
-  <% when "eval" then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-chfap00s.tck2vm.local" -%>
+    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
+  <% when /.*ck2ejo2-chfap00s.*/ then %>
+    <% CHEF_SERVER_NAME="ck2ejo2-chfap00s" -%>
     <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-chfrp00s.tck2vm.local" -%>
+    <% REPO_SERVER_NAME="ck2ejo2-chfrp00s" -%>
     <% REPO_SERVER_IP="198.18.0.15" -%>
     <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
     <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
     <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when "imai" then %>
+  <% when /.*ck2wjih-vcfap00s.*/ then %>
     <% CHEF_SERVER_NAME="ck2wjih-vcfap00s" -%>
     <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
     <% REPO_SERVER_NAME="ck2wjih-vcfrp00s" -%>
     <% REPO_SERVER_IP="198.18.0.15" -%>
     <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
     <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
     <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when "oyam" then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-vcfap00s.ck2vme1.local" -%>
+  <% when /.*ck2ejo2-vcfap00s.*/ then %>
+    <% CHEF_SERVER_NAME="ck2ejo2-vcfap00s" -%>
     <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% CHEF_SERVER_URL="chef_server_url  \"https://#{CHEF_SERVER_NAME}/organizations/ckkcl\"" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-vcfrp00s.ck2vme1.local" -%>
+    <% REPO_SERVER_NAME="ck2ejo2-vcfrp00s" -%>
     <% REPO_SERVER_IP="198.18.0.15" -%>
     <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
     <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
     <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
   <% else %>
-    echo "ERR: global-configuration environment is not specified, use -E <enviroment>"
+    echo "ERR: global-configuration failed .check 'knife.rb[chef_server_url]"
   <% end %>
 
 #</global-configuration>
@@ -139,7 +135,6 @@ EOP
 cat > /etc/chef/client.rb <<'EOP'
 <%= config_content %>
 <%= "#{SSL_VERIFY_MODE}" %>
-<%= "#{CHEF_SERVER_URL}" %>
 EOP
 
 cat > /etc/chef/first-boot.json <<'EOP'
