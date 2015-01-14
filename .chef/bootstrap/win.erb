@@ -24,42 +24,19 @@
 <%= "SETX HTTP_PROXY \"#{knife_config[:bootstrap_proxy]}\"" if knife_config[:bootstrap_proxy] %>
 
 @rem <global-configuration>
-  <% case @chef_config[:chef_server_url] %>
-  <% when /.*chef.urasoko.com.*/ then %>
-    <% CHEF_SERVER_NAME="chef.urasoko.com" -%>
-    <% CHEF_SERVER_IP="10.110.42.207" -%>
-    <% REPO_SERVER_NAME="repo.urasoko.com" -%>
-    <% REPO_SERVER_IP="10.110.42.200" -%>
-    <% REPO_URL="http://#{REPO_SERVER_NAME}/packages/" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2ejo2-chfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-chfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-chfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2wjih-vcfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2wjih-vcfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2wjih-vcfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2ejo2-vcfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-vcfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-vcfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% else %>
-    echo "ERR: global-configuration failed .check 'knife.rb[chef_server_url]"
-  <% end %>
+
+  <% CHEF_SERVER_NAME="chefserver.cloud-platform.kddi.ne.jp" -%>
+  <% CHEF_SERVER_IP="198.18.0.14" -%>
+  <% REPO_SERVER_NAME="chefrepo.cloud-platform.kddi.ne.jp" -%>
+  <% REPO_SERVER_IP="198.18.0.15" -%>
+  <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
+  <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
   <% msi="chef-client-12.0.3-1.msi" -%>
+  
 @rem </global-configuration>
 
 @rem <regist hosts>
+echo reghosts
   @set HOSTS_FILE=%systemroot%\system32\drivers\etc\hosts
   @set CHEF_HOSTS_STR=<%= "#{CHEF_SERVER_IP}" %> <%= "#{CHEF_SERVER_NAME}" %>
   @FINDSTR "%CHEF_HOSTS_STR%" %HOSTS_FILE% > nul
@@ -67,6 +44,7 @@
   @set REPO_HOSTS_STR=<%= "#{REPO_SERVER_IP}" %> <%= "#{REPO_SERVER_NAME}" %>
   @FINDSTR "%REPO_HOSTS_STR%" %HOSTS_FILE% > nul
   @IF NOT !ERRORLEVEL! == 0 ( ECHO %REPO_HOSTS_STR%>>%HOSTS_FILE% )
+  
 @rem </regist hosts>
 
 @set BOOTSTRAP_DIRECTORY=<%= bootstrap_directory %>

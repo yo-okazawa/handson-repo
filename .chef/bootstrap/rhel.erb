@@ -3,42 +3,14 @@ bash -c '
 
 #<global-configuration>
 
-  <% case @chef_config[:chef_server_url] %>
-  <% when /.*chef.urasoko.com.*/ then %>
-    <% CHEF_SERVER_NAME="chef.urasoko.com" -%>
-    <% CHEF_SERVER_IP="10.110.42.207" -%>
-    <% REPO_SERVER_NAME="repo.urasoko.com" -%>
-    <% REPO_SERVER_IP="10.110.42.200" -%>
-    <% REPO_URL="http://#{REPO_SERVER_NAME}/packages/" -%>
-    <% BOOTSTRAP_WGET_OPTION="" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2ejo2-chfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-chfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-chfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2wjih-vcfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2wjih-vcfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2wjih-vcfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% when /.*ck2ejo2-vcfap00s.*/ then %>
-    <% CHEF_SERVER_NAME="ck2ejo2-vcfap00s" -%>
-    <% CHEF_SERVER_IP="198.18.0.14" -%>
-    <% REPO_SERVER_NAME="ck2ejo2-vcfrp00s" -%>
-    <% REPO_SERVER_IP="198.18.0.15" -%>
-    <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
-    <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
-    <% SSL_VERIFY_MODE="ssl_verify_mode :verify_none" -%>
-  <% else %>
-    echo "ERR: global-configuration failed .check 'knife.rb[chef_server_url]"
-  <% end %>
+  <% CHEF_SERVER_NAME="chefserver.cloud-platform.kddi.ne.jp" -%>
+  <% CHEF_SERVER_IP="198.18.0.14" -%>
+  <% REPO_SERVER_NAME="chefrepo.cloud-platform.kddi.ne.jp" -%>
+  <% REPO_SERVER_IP="198.18.0.15" -%>
+  <% REPO_URL="https://#{REPO_SERVER_NAME}/packages/" -%>
+  <% BOOTSTRAP_WGET_OPTION="--no-check-certificate" -%>
+  <% SSL_VERIFY_MODE="" -%>
+  CHEF_PACKAGE="chef-12.0.3-1.x86_64.rpm"
 
 #</global-configuration>
 
@@ -84,7 +56,6 @@ exists() {
 <% else %>
 
   if ! exists /usr/bin/chef-client; then
-    CHEF_PACKAGE="chef-12.0.3-1.x86_64.rpm"
     PACKAGE_URL=<%= "#{REPO_URL}" %>$CHEF_PACKAGE
     BTW_OPTION=<%= "#{BOOTSTRAP_WGET_OPTION}" %>
     echo "Installing Chef Client..."
