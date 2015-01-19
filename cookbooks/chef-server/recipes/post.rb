@@ -1,5 +1,5 @@
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['push']['package']}" do
-  source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['push']['package']}"
+  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['push']['package']}"
   checksum "#{node['chef-server']['push']['checksum']}"
 end
 
@@ -10,7 +10,7 @@ execute "opscode-push-jobs-server-ctl reconfigure"
 execute "chef-server-ctl reconfigure"
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['report']['package']}" do
-  source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['report']['package']}"
+  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['report']['package']}"
   checksum "#{node['chef-server']['report']['checksum']}"
 end
 
@@ -19,12 +19,3 @@ execute "chef-server-ctl install opscode-reporting --path #{node['chef-server'][
 execute "opscode-reporting-ctl reconfigure"
 
 execute "chef-server-ctl reconfigure"
-
-# remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['sync']['package']}" do
-#   source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['sync']['package']}"
-#   checksum "#{node['chef-server']['sync']['checksum']}"
-# end
-#
-# execute "chef-server-ctl install chef-sync --path #{node['chef-server']['install_path']}"
-#
-# execute "chef-sync-ctl reconfigure"

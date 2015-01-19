@@ -1,12 +1,7 @@
 include_recipe "chef-server::pre"
 
-template '/etc/opscode/chef-server.rb' do
-  source 'chef-server.rb.erb'
-  variables({:api_fqdn => node['chef-server']['api']['fqdn']})
-end
-
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['drbd84-utils']['package']}" do
-  source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['drbd84-utils']['package']}"
+  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['drbd84-utils']['package']}"
   checksum "#{node['chef-server']['drbd84-utils']['checksum']}"
 end
 
@@ -15,7 +10,7 @@ rpm_package "#{node['chef-server']['drbd84-utils']['package']}" do
 end
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['kmod-drbd84']['package']}" do
-  source "http://#{node['chef-server']['repo']['url']}/#{node['chef-server']['kmod-drbd84']['package']}"
+  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['kmod-drbd84']['package']}"
   checksum "#{node['chef-server']['kmod-drbd84']['checksum']}"
 end
 
