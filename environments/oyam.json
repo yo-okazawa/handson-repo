@@ -2,8 +2,17 @@
   "name": "oyam",
   "default_attributes": {
     "chef-server": {
-      "repo": {
-        "url":"ck2ejo2-vcfrp01.ck2vme1.local\/packages"
+      "rp1": {
+        "fqdn":"ck2ejo2-vcfrp01.ck2vme1.local",
+        "ipaddr":"10.195.12.8"
+      },
+      "rp2": {
+        "fqdn":"ck2ejo2-vcfrp02.ck2vme1.local",
+        "ipaddr":"10.195.12.9"
+      },
+      "rp_vip": {
+        "fqdn":"chefrepo.cloud-platform.kddi.ne.jp",
+        "ipaddr":"10.195.255.56"
       },
       "ap1": {
         "fqdn":"ck2ejo2-vcfap01.ck2vme1.local",
@@ -27,7 +36,8 @@
         "device":"eth1"
       },
       "api": {
-        "fqdn":"ck2ejo2-vcfap00s.ck2vme1.local"
+        "fqdn":"chefserver.cloud-platform.kddi.ne.jp",
+        "ipaddr":"10.195.255.57"
       },
       "anltcs": {
         "fqdn":"ck2ejo2-vcfws01.ck2vme1.local"

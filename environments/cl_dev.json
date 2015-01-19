@@ -2,8 +2,17 @@
   "name": "cl_dev",
   "default_attributes": {
     "chef-server": {
-      "repo": {
-        "url":"repo.urasoko.com\/packages"
+      "rp1": {
+        "fqdn":"repo.urasoko.com",
+        "ipaddr":"10.110.42.200"
+      },
+      "rp2": {
+        "fqdn":"",
+        "ipaddr":""
+      },
+      "rp_vip": {
+        "fqdn":"chefrepo.cloud-platform.kddi.ne.jp",
+        "ipaddr":"10.110.42.200"
       },
       "ap1": {
         "fqdn":"ap01.urasoko.com",
@@ -27,7 +36,8 @@
         "device":"eth0"
       },
       "api": {
-        "fqdn":"10.110.42.207"
+        "fqdn":"chefserver.cloud-platform.kddi.ne.jp",
+        "ipaddr":"10.110.42.207"
       },
       "anltcs": {
         "fqdn":"10.110.42.208"
