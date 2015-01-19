@@ -21,9 +21,15 @@ server "<%= node['chef-server']['ap2']['fqdn'] %>",
   :ipaddress => "<%= node['chef-server']['ap2']['ipaddr'] %>",
   :role => "frontend"
 
-api_fqdn "<%= @api_fqdn %>"
+api_fqdn "<%= node['chef-server']['api']['fqdn'] %>"
 
 dark_launch['actions'] = true
 rabbitmq['ha'] = true
 rabbitmq['vip'] = "<%= node['chef-server']['db_vip']['ipaddr'] %>"
 rabbitmq['node_ip_address'] = '0.0.0.0'
+
+case PrivateChef["servers"][node['fqdn']]["role"]
+when "frontend"
+  nginx['ssl_certificate']  = "/var/opt/opscode/nginx/ca/chefserver.cloud-platform.kddi.ne.jp.crt"
+  nginx['ssl_certificate_key']  = "/var/opt/opscode/nginx/ca/chefserver.cloud-platform.kddi.ne.jp.key"
+end
