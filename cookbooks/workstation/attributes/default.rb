@@ -5,8 +5,7 @@
 
 default["workstation"]["gem-list"] = [
   "knife-push-0.5.2.gem",
-  "knife-reporting-0.4.1.gem",
-  "mixlib-cli-1.5.0.gem"
+  "knife-reporting-0.4.1.gem"
 ]
 
 default["workstation"]["template"] = [
