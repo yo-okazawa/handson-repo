@@ -39,7 +39,7 @@ end
 directory "/usr/share/nginx/html/packages" do
   owner 'root'
   group 'root'
-  mode '0644'
+  mode '0755'
   action :create
 end
 
