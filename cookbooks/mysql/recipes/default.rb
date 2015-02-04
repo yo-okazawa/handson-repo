@@ -2,37 +2,24 @@
 # Cookbook Name:: mysql
 # Recipe:: default
 #
-node["mysql"]["package-list"].each do |package|
 
-  #get rpm from repoServer
-  remote_file "#{node["mysql"]["package-dir"]}/#{package}" do
-    source "#{node["mysql"]["repo-url"]}/#{package}"
-    owner "root"
-    group "root"
-    mode 0644
-    action :create
-  end
-  
-  #install local rpm
-  rpm_package "#{node["mysql"]["package-dir"]}/#{package}" do
-    source "#{node["mysql"]["package-dir"]}/#{package}"
-    action :install
-  end
-  
+include_recipe 'yum-repo'
+
+#package install
+package node["mysql"]["packages"] do
+  action :install
+end
+
+
+#service enable & start
+service "mysqld" do
+  action [ :enable, :start ]
 end
 
 #use cookbook_file
-template "#{node["mysql"]["cnf-file"]}" do
-  source "#{node["mysql"]["erb-file"]}"
-  owner "root"
-  group "root"
-  mode 0644
+template "#{node["mysql"]["conf-dir"]}/#{node["mysql"]["conf-file"]}" do
+  source "#{node["mysql"]["template"]}"
   action :create
-  notifies :reload, 'service[mysql]'
 end
 
-#service mysql start
-service "mysql" do
-  action [ :enable, :start ]
-end
 

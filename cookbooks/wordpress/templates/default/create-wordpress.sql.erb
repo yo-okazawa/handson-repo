@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS <%= node["wordpress"]["db"]["name"] %>;
+GRANT ALL ON <%= node["wordpress"]["db"]["name"] %>.* TO '<%= node["wordpress"]["user"]["name"] %>'@'<%= node["wordpress"]["user"]["host"] %>' identified by '<%= node["wordpress"]["user"]["password"] %>';
