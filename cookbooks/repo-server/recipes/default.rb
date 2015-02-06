@@ -12,16 +12,19 @@ end
 #put crt file
 cookbook_file "/etc/nginx/chefrepo.cloud-platform.kddi.ne.jp.crt" do
   source "chefrepo.cloud-platform.kddi.ne.jp.crt"
+  sensitive true
 end
 
 #put key file
 cookbook_file "/etc/nginx/chefrepo.cloud-platform.kddi.ne.jp.key" do
   source "chefrepo.cloud-platform.kddi.ne.jp.key"
+  sensitive true
 end
 
 #put nginx conf
 cookbook_file "/etc/nginx/conf.d/example_ssl.conf" do
   source "example_ssl.conf"
+  sensitive true
 end
 
 #make check.html file
@@ -36,7 +39,7 @@ service 'nginx' do
 end
 
 #make packages dir
-directory "/usr/share/nginx/html/packages" do
+directory "#{node["repo-server"]["packages"]}" do
   owner 'root'
   group 'root'
   mode '0755'
@@ -53,6 +56,7 @@ template "#{node["repo-server"]["shell"]}" do
   owner "root"
   group "root"
   mode 0744
+  sensitive true
   action :create
 end
 
@@ -60,12 +64,13 @@ end
 bash "rsync mirror" do
   user "root"
   code "sh #{node["repo-server"]["shell"]} >> #{node["repo-server"]["log"]} &"
+  only_if {node["repo-server"]["rsync"]["first"]}
 end
 
 #add crontab
 ruby_block "add_crontab" do
   block do
-    crondata = "10 2 * * * root sh #{node["repo-server"]["shell"]} >> #{node["repo-server"]["log"]}"
+    crondata = "#{node["repo-server"]["cron"]["interval"]} root sh #{node["repo-server"]["shell"]} >> #{node["repo-server"]["log"]}"
     if File.open("/etc/crontab").read.index(crondata)
       File.write("/tmp/test.txt", "a")
     else
