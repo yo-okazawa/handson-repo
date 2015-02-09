@@ -2,10 +2,12 @@ execute 'yum update -y'
 
 hostsfile_entry "#{node['chef-server']['api']['ipaddr']}" do
   hostname  "#{node['chef-server']['api']['fqdn']}"
+  action :append
 end
 
 hostsfile_entry "#{node['chef-server']['rp_vip']['ipaddr']}" do
   hostname  "#{node['chef-server']['rp_vip']['fqdn']}"
+  action :append
 end
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['anltcs']['package']}" do
