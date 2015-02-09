@@ -40,7 +40,7 @@
         "ipaddr":"10.110.42.207"
       },
       "anltcs": {
-        "fqdn":"10.110.42.208"
+        "fqdn":"ws01.urasoko.com"
       },
       "kmod-drbd84": {
         "package":"kmod-drbd84-8.4.5-2.el6.elrepo.x86_64.rpm",
