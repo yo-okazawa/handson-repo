@@ -1,5 +1,10 @@
 include_recipe "chef-server::pre"
 
+hostsfile_entry "#{node['chef-server']['api']['ipaddr']}" do
+  hostname  "#{node['chef-server']['api']['fqdn']}"
+  action :append
+end
+
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['drbd84-utils']['package']}" do
   source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['drbd84-utils']['package']}"
   checksum "#{node['chef-server']['drbd84-utils']['checksum']}"
