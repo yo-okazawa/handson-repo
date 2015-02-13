@@ -1,7 +1,7 @@
 default['chef-server']['topology'] = 'ha'
 
-default['chef-server']['core']['package'] = 'chef-server-core-12.0.2-1.x86_64.rpm'
-default['chef-server']['core']['checksum'] = 'ac6a8c45087cb28caf392c0dfdf93c40a763da585d8dd93473a87a36eca6f0aa'
+default['chef-server']['core']['package'] = 'chef-server-core-12.0.3-1.x86_64.rpm'
+default['chef-server']['core']['checksum'] = 'cb726462fc991fe2ee044b3f58bad24de3e5d210a1705985e85e9a591d68c6f6'
 default['chef-server']['manage']['package'] = 'opscode-manage-1.9.0-1.x86_64.rpm'
 default['chef-server']['manage']['checksum'] = '397bf260ea95aa1fbb2448b26f35eb48b2643e75dabc0168d99ad98a5a1e59e9'
 default['chef-server']['push']['package'] = 'opscode-push-jobs-server-1.1.6-1.x86_64.rpm'
