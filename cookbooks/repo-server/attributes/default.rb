@@ -3,7 +3,7 @@
 # Recipe:: attributes/default.rb
 #
 
-default["repo-server"]["rpm-package"] = "/tmp/nginx-1.7.9-1.el6.ngx.x86_64.rpm"
+default["repo-server"]["rpm-package"] = "/tmp/nginx-1.7.10-1.el6.ngx.x86_64.rpm"
 
 default["repo-server"]["shell"] = "/usr/local/bin/rsync-centos-yum-mirror.sh"
 default["repo-server"]["packages"] = "/usr/share/nginx/html/packages"
