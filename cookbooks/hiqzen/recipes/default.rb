@@ -92,7 +92,7 @@ end if
 
 #javaのバージョンを1.7にする
 remote_file "/tmp/jdk-7u71-linux-x64.rpm" do
-  source "http://chefrepo.cloud-platform.kddi.ne.jp/packages/jdk-7u71-linux-x64.rpm"
+  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/jdk-7u71-linux-x64.rpm"
   action :create
 end
 rpm_package "/tmp/jdk-7u71-linux-x64.rpm" do
@@ -117,7 +117,7 @@ end
 #f-secureをインストール(インストール中にエンターしたりするためにexpectスクリプトで実行する。)
 
 remote_file "/tmp/f-secure-linux-security-9.20.2520.tar.gz" do
-  source "http://chefrepo.cloud-platform.kddi.ne.jp/packages/f-secure-linux-security-9.20.2520.tar.gz"
+  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/f-secure-linux-security-9.20.2520.tar.gz"
   action :create
 end
 
@@ -144,7 +144,7 @@ end
 #HiQZenのtarファイルを展開 ディレクトリの所有者はkfsadmin(tar zxvf)
 
 remote_file "/tmp/KFS_20150122.tar.gz" do
-  source "http://chefrepo.cloud-platform.kddi.ne.jp/packages/KFS_20150122.tar.gz"
+  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/KFS_20150122.tar.gz"
   action :create
 end
 
