@@ -19,7 +19,7 @@
 case node['platform_family']
 when 'rhel'
   remote_file '/tmp/runit-2.1.1.rpm' do
-    source 'http://10.110.42.200/packages/runit-2.1.1.rpm'
+    source 'https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef/packages/runit-2.1.1.rpm'
     checksum '622351a75345b6bd302bc1b99771df98fe26da22862c588cd745c33876df903d'
   end
 
