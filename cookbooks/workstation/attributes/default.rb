@@ -13,7 +13,7 @@ default["workstation"]["template"] = [
   "win.erb"
 ]
 
-default["workstation"]["repo-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages"
+default["workstation"]["repo-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef"
 default["workstation"]["repo-gem"] = "gems"
 default["workstation"]["repo-template"] = "bootstrap"
 default["workstation"]["gem-dir"] = "/tmp/gems"
