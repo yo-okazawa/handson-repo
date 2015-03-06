@@ -4,49 +4,49 @@
 #
 [base]
 name=CentOS-$releasever - Base
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/os/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/os/$basearch/
 gpgcheck=1
 sslverify=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
 
 #released updates
 [updates]
 name=CentOS-$releasever - Updates
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/updates/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/updates/$basearch/
 gpgcheck=1
 sslverify=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
 
 #packages used/produced in the build but not released
 [addons]
 name=CentOS-$releasever - Addons
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/addons/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/addons/$basearch/
 gpgcheck=1
 sslverify=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
 
 #additional packages that may be useful
 [extras]
 name=CentOS-$releasever - Extras
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/extras/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/extras/$basearch/
 gpgcheck=1
 sslverify=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
 
 #additional packages that extend functionality of existing packages
 [centosplus]
 name=CentOS-$releasever - Plus
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/centosplus/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/centosplus/$basearch/
 gpgcheck=1
 sslverify=0
 enabled=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
 
 #contrib - packages by Centos Users
 [contrib]
 name=CentOS-$releasever - Contrib
-baseurl=https://<%= node["yum-repo"]["repo-server"] %>/centos/$releasever/contrib/$basearch/
+baseurl=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/$releasever/contrib/$basearch/
 gpgcheck=1
 sslverify=0
 enabled=0
-gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/centos/RPM-GPG-KEY-CentOS-5
+gpgkey=https://<%= node["yum-repo"]["repo-server"] %>/<%= node["yum-repo"]["cent-repo"] %>/RPM-GPG-KEY-CentOS-5
