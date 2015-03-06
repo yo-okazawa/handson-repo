@@ -3,7 +3,7 @@
 # Recipe:: attributes/default.rb
 #
 
-default["wordpress"]["package-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages/wordpress-4.1.tar.gz"
+default["wordpress"]["package-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef/packages/wordpress-4.1.tar.gz"
 default["wordpress"]["package"] = "wordpress-4.1.tar.gz"
 default["wordpress"]["documentroot"] = "/var/www/html"
 default["wordpress"]["wordpressroot"] = "wdp"
