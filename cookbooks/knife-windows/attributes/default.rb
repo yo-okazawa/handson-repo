@@ -37,6 +37,6 @@ default["knife-windows"]["gem-list"] = [
   "winrm-s-0.2.2.gem"
 ]
 
-default["knife-windows"]["repo-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages"
+default["knife-windows"]["repo-url"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef"
 default["knife-windows"]["repo-gem"] = "gems"
 default["knife-windows"]["gem-dir"] = "/tmp/gems"
