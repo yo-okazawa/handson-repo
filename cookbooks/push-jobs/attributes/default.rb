@@ -27,11 +27,11 @@ default['push_jobs']['whitelist']   = { 'chef-client' => 'chef-client',
 
 case node['platform_family']
 when 'debian', 'rhel'
-  default['push_jobs']['package_url']      = 'http://10.110.42.200/packages/opscode-push-jobs-client-1.1.5-1.el6.x86_64.rpm'
+  default['push_jobs']['package_url']      = 'https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef/packages/opscode-push-jobs-client-1.1.5-1.el6.x86_64.rpm'
   default['push_jobs']['package_checksum'] = 'f5e6be32f60b689e999dcdceb102371a4ab21e5a1bb6fb69ff4b2243a7185d84'
   default['push_jobs']['service_string'] = 'runit_service[opscode-push-jobs-client]'
 when 'windows'
-  default['push_jobs']['package_url']      = 'http://10.110.42.200/packages/opscode-push-jobs-client-windows-1.1.5-1.windows.msi'
+  default['push_jobs']['package_url']      = 'http://chefrepo.cloud-platform.kddi.ne.jp/packages/chef/packages/opscode-push-jobs-client-windows-1.1.5-1.windows.msi'
   default['push_jobs']['package_checksum'] = '411520e6a2e3038cd018ffacee0e76e37e7badd1aa84de03f5469c19e8d6c576'
   default['push_jobs']['service_string'] = 'service[pushy-client]'
 end
