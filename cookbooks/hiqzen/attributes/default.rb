@@ -14,3 +14,7 @@ default["hiqzen"]["limits_conf"] = [
 "kfsadmin soft nofile 8192"
 ]
 
+default["hiqzen"]["repo"] = "https://chefrepo.cloud-platform.kddi.ne.jp/packages/chef/packages"
+default["hiqzen"]["jdk"] = "jdk-7u71-linux-x64.rpm"
+default["hiqzen"]["f-secure"] = "f-secure-linux-security-9.20.2520.tar.gz"
+default["hiqzen"]["KFS"] = "KFS_20150122.tar.gz"

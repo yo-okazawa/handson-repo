@@ -91,11 +91,11 @@ end if
 
 
 #javaのバージョンを1.7にする
-remote_file "/tmp/jdk-7u71-linux-x64.rpm" do
-  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/jdk-7u71-linux-x64.rpm"
+remote_file "/tmp/#{node["hiqzen"]["jdk"]}" do
+  source "#{node["hiqzen"]["repo"]}/#{node["hiqzen"]["jdk"]}"
   action :create
 end
-rpm_package "/tmp/jdk-7u71-linux-x64.rpm" do
+rpm_package "/tmp/#{node["hiqzen"]["jdk"]}" do
   action :install
 end
 
@@ -116,14 +116,14 @@ end
 
 #f-secureをインストール(インストール中にエンターしたりするためにexpectスクリプトで実行する。)
 
-remote_file "/tmp/f-secure-linux-security-9.20.2520.tar.gz" do
-  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/f-secure-linux-security-9.20.2520.tar.gz"
+remote_file "/tmp/#{node["hiqzen"]["f-secure"]}" do
+  source "#{node["hiqzen"]["repo"]}/#{node["hiqzen"]["f-secure"]}"
   action :create
 end
 
 execute "deploy_package" do
   cwd "/var"
-  command "tar -xzvf /tmp/f-secure-linux-security-9.20.2520.tar.gz"
+  command "tar -xzvf /tmp/#{node["hiqzen"]["f-secure"]}"
   not_if { ::File.exists?("/var/f-secure-linux-security-9.20.2520/f-secure-linux-security-9.20.2520-release-notes.txt") }
 end
 
@@ -143,14 +143,14 @@ end
 
 #HiQZenのtarファイルを展開 ディレクトリの所有者はkfsadmin(tar zxvf)
 
-remote_file "/tmp/KFS_20150122.tar.gz" do
-  source "https://chefrepo.cloud-platform.kddi.ne.jp/packages/KFS_20150122.tar.gz"
+remote_file "/tmp/#{node["hiqzen"]["KFS"]}" do
+  source "#{node["hiqzen"]["repo"]}/#{node["hiqzen"]["KFS"]}"
   action :create
 end
 
 execute "deploy_package" do
   cwd "/var"
-  command "tar -xzvf /tmp/KFS_20150122.tar.gz"
+  command "tar -xzvf /tmp/#{node["hiqzen"]["KFS"]}"
   not_if { ::File.exists?("/var/KFS/LICENSE") }
 end
 
