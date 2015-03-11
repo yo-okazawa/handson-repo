@@ -3,7 +3,6 @@
 # Recipe:: attributes/default.rb
 #
 default["repo-server"]["packages"] = [
-  ["mackerel-agent-latest.noarch.rpm", "/packages/mackerel", "http://file.mackerel.io/agent/rpm/mackerel-agent-latest.noarch.rpm", "237393925f960b9640386fbfdc8e37cff2bb22afb8b53c3b051f726c4ee07e32"],
   ["akami-1.2.2.gem", "/packages/chef/gems", "https://rubygems.org/downloads/a-0.1.1.gem", "be43cd6e03e39216448f03e97be25a38bfdbd66b1ea28144acf5ace8e17e3888"],
   ["builder-3.2.2.gem", "/packages/chef/gems", "https://rubygems.org/downloads/builder-3.2.2.gem", "62fb9ad70ea42219a0c8d209a30281803712c717df7cb8f5ce5f63b4d489d191"],
   ["em-winrm-0.6.0.gem", "/packages/chef/gems", "https://rubygems.org/downloads/em-winrm-0.6.0.gem", "78a0bb563463bfaa3c2fc8f79c173cfea6f0103cddb9ea1e55a7d18b8e9c1428"],
