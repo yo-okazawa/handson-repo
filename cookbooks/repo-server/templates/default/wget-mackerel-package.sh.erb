@@ -1,0 +1,11 @@
+#!/bin/bash
+date
+wget -N \
+--directory-prefix=<%= node["repo-server"]["mackerel"]["dastination"] %> \
+<%= node["repo-server"]["mackerel"]["source"] %>
+if [ $? -ne 0 ]
+then
+  echo "`date` ERROR:mackerel-mirror-fail"
+else
+  echo ""
+fi

@@ -26,7 +26,7 @@ describe file('/etc/nginx/conf.d/repo-server.conf') do
   its(:content) { should match /^\s*listen\s+443\s+ssl\s*;/ }
   its(:content) { should match /^\s*ssl_certificate\s+\/etc\/nginx\/chefrepo.cloud-platform.kddi.ne.jp.crt\s*;/ }
   its(:content) { should match /^\s*ssl_certificate_key\s+\/etc\/nginx\/chefrepo.cloud-platform.kddi.ne.jp.key\s*;/ }
-  its(:content) { should match /^\s*location\s+\/\s*{.^\s*root\s+\/usr\/share\/nginx\/html\s*;\s*.^\s*index\s+index\.html\s*;/m }
+  its(:content) { should match /^\s*root\s+\/usr\/share\/nginx\/html\s*;/ }
   its(:content) { should match /^\s*location\s+\/packages\/oracle\s*{.^\s*auth_basic\s+"Restricted"\s*;.^\s*auth_basic_user_file\s+\/etc\/nginx\/\.htpasswd\s*;/m }
 end
 
@@ -47,7 +47,8 @@ test_directories = [
   "/usr/share/nginx/html/packages/mackerel",
   "/usr/share/nginx/html/packages/centos",
   "/usr/share/nginx/html/packages/oracle",
-  "/var/log/rsync"
+  "/var/log/rsync",
+  "/var/log/wget"
 ]
 
 test_directories.each do |dir|
@@ -109,12 +110,21 @@ describe file('/etc/logrotate.d/rsync') do
   its(:content) { should match /^\s*rotate\s+180\s*$/ }
 end
 
+describe file('/etc/logrotate.d/wget') do
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
+  it { should be_grouped_into 'root' }
+  its(:content) { should match /^\s*rotate\s+180\s*$/ }
+end
+
 
 #
 #test crontab
 #
 describe file('/etc/crontab') do
-  its(:content) { should match /^10 2.*root sh \/usr\/local\/bin\/rsync-centos-yum-mirror\.sh >> \/var\/log\/rsync-centos-yum-mirror\.log/ }
+  its(:content) { should match /^10 2.*root sh \/usr\/local\/bin\/rsync-centos-yum-mirror\.sh >> \/var\/log\/rsync\/rsync-centos-yum-mirror\.log/ }
+  its(:content) { should match /^5 2.*root sh \/usr\/local\/bin\/wget-mackerel-package\.sh >> \/var\/log\/wget\/wget-mackerel-package\.log/ }
 end
 
 

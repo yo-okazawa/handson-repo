@@ -23,6 +23,11 @@ rsync \
 --include='[5-6]*/updates**' \
 --include='[5-6]*/os**' \
 --exclude='*' \
-<%= node["repo-server"]["source"] %> \
-<%= node["repo-server"]["dastination"] %>
-echo ""
+<%= node["repo-server"]["centos"]["source"] %> \
+<%= node["repo-server"]["centos"]["dastination"] %>
+if [ $? -ne 0 ]
+then
+  echo "`date` ERROR:centos-mirror-fail"
+else
+  echo ""
+fi

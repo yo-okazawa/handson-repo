@@ -36,7 +36,7 @@ cookbook_file "/etc/nginx/conf.d/repo-server.conf" do
   notifies :reload, 'service[nginx]', :delayed
 end
 
-bash "rsync mirror" do
+bash "mv default.conf" do
   user "root"
   cwd "/etc/nginx/conf.d/"
   code "mv default.conf default.conf.org"
@@ -51,6 +51,7 @@ bash "mv example_ssl.conf" do
   only_if { File.exists?("/etc/nginx/conf.d/example_ssl.conf") }
   notifies :reload, 'service[nginx]', :delayed
 end
+
 
 #
 #make directories
@@ -100,54 +101,48 @@ file "/usr/share/nginx/html/check.html" do
   content "html-check OK"
 end
 
-template "#{node["repo-server"]["shell"]}" do
-  source "rsync-centos-yum-mirror.sh.erb"
-  owner "root"
-  group "root"
-  mode 0744
-  sensitive true
-  action :create
+#put shell file
+%w{ centos mackerel }.each do |target|
+  template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
+    source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
+    owner "root"
+    group "root"
+    mode 0744
+    action :create
+  end
 end
 
-#put logrotate nginx file
-cookbook_file "/etc/logrotate.d/nginx" do
-  source "nginx"
-  owner 'root'
-  group 'root'
-  mode '0644'
+#put logrotate file
+%w{ nginx rsync wget }.each do |target|
+  cookbook_file "/etc/logrotate.d/#{target}" do
+    source target
+    owner 'root'
+    group 'root'
+    mode '0644'
+  end
 end
-
-#put logrotate rcync file
-cookbook_file "/etc/logrotate.d/rsync" do
-  source "rsync"
-  owner 'root'
-  group 'root'
-  mode '0644'
-end
-
 
 #
 #rsync yum mirror configure and do
 #
-
-#add crontab
-ruby_block "add_crontab" do
-  block do
-    crondata = "#{node["repo-server"]["cron"]["interval"]} root sh #{node["repo-server"]["shell"]} >> #{node["repo-server"]["log"]}"
-    if File.open("/etc/crontab").read.index(crondata)
-      File.write("/tmp/test.txt", "a")
-    else
-      File.open("/etc/crontab","a"){|file|
-       file.puts crondata
-      }
+%w{ centos mackerel }.each do |target|
+  #add crontab
+  ruby_block "add_crontab" do
+    block do
+      crondata = "#{node["repo-server"]["#{target}"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log"]}"
+      if File.open("/etc/crontab").read.index(crondata)
+      else
+        File.open("/etc/crontab","a"){|file|
+         file.puts crondata
+        }
+      end
     end
   end
-end
 
-#rcync mirror
-bash "rsync mirror" do
-  user "root"
-  code "sh #{node["repo-server"]["shell"]} >> #{node["repo-server"]["log"]} &"
-  only_if {node["repo-server"]["rsync"]["first"]}
+  #rcync mirror centos
+  bash "execute shell" do
+    user "root"
+    code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log"]} &"
+    only_if {node["repo-server"]["rsync"]["first"]}
+  end
 end
-
