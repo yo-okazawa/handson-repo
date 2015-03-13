@@ -1,0 +1,17 @@
+#!/bin/bash
+
+msi_URL="<%= node["repo-server"]["mackerel-msi"]["source"] %>/<%= node["repo-server"]["mackerel-msi"]["package"] %>"
+mackerel_directory="<%= node["repo-server"]["mackerel-msi"]["dastination"] %>"
+
+
+echo -e "`date` wget-mackerel-package start\n"
+
+wget -N -P ${mackerel_directory} ${msi_URL}
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m wget-mackerel-package fail\n"
+else
+  echo -e "\e[32m[OK]\e[m wget-mackerel-package success\n"
+fi
+
+echo -e "`date` wget-mackerel-package finished\n"

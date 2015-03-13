@@ -102,7 +102,7 @@ file "/usr/share/nginx/html/check.html" do
 end
 
 #put shell file
-%w{ centos mackerel }.each do |target|
+%w{ centos mackerel-rpm mackerel-msi }.each do |target|
   template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
     source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
     owner "root"
@@ -113,7 +113,7 @@ end
 end
 
 #put logrotate file
-%w{ nginx rsync wget }.each do |target|
+%w{ nginx rsync }.each do |target|
   cookbook_file "/etc/logrotate.d/#{target}" do
     source target
     owner 'root'
@@ -125,24 +125,30 @@ end
 #
 #rsync yum mirror configure and do
 #
-%w{ centos mackerel }.each do |target|
-  #add crontab
-  ruby_block "add_crontab" do
-    block do
-      crondata = "#{node["repo-server"]["#{target}"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log"]}"
-      if File.open("/etc/crontab").read.index(crondata)
-      else
-        File.open("/etc/crontab","a"){|file|
-         file.puts crondata
-        }
-      end
+
+#add crontab
+ruby_block "add_crontab" do
+  block do
+    crondata = "#{node["repo-server"]["centos"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log"]}"
+    if File.open("/etc/crontab").read.index(crondata)
+    else
+      File.open("/etc/crontab","a"){|file|
+       file.puts crondata
+      }
     end
   end
+end
 
-  #rcync mirror centos
-  bash "execute shell" do
-    user "root"
-    code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log"]} &"
-    only_if {node["repo-server"]["rsync"]["first"]}
+#rcync mirror centos
+bash "execute shell" do
+  user "root"
+  code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log"]} &"
+  only_if {node["repo-server"]["rsync"]["first"]}
+end
+
+#wget mackerel
+%w{ mackerel-rpm mackerel-msi }.each do |target|
+  remote_file "#{node["repo-server"]["#{target}"]["dastination"]}/#{node["repo-server"]["#{target}"]["package"]}" do
+    source "#{node["repo-server"]["#{target}"]["source"]}/#{node["repo-server"]["#{target}"]["package"]}"
   end
 end

@@ -53,10 +53,15 @@ default["repo-server"]["centos"]["source"] = "rsync://rsync.kddilabs.jp/centos/"
 default["repo-server"]["centos"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/centos/"
 default["repo-server"]["centos"]["log"] = "/var/log/rsync/rsync-centos-yum-mirror.log"
 
-default["repo-server"]["mackerel"]["shell"] = "wget-mackerel-package.sh"
-default["repo-server"]["mackerel"]["source"] = "http://file.mackerel.io/agent/rpm/mackerel-agent-latest.noarch.rpm"
-default["repo-server"]["mackerel"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/mackerel"
-default["repo-server"]["mackerel"]["log"] = "/var/log/wget/wget-mackerel-package.log"
+default["repo-server"]["mackerel-rpm"]["shell"] = "wget-mackerel-rpm.sh"
+default["repo-server"]["mackerel-rpm"]["source"] = "http://file.mackerel.io/agent/rpm"
+default["repo-server"]["mackerel-rpm"]["package"] = "mackerel-agent-latest.noarch.rpm"
+default["repo-server"]["mackerel-rpm"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/mackerel"
+
+default["repo-server"]["mackerel-msi"]["shell"] = "wget-mackerel-msi.sh"
+default["repo-server"]["mackerel-msi"]["source"] = "http://file.mackerel.io/agent/msi"
+default["repo-server"]["mackerel-msi"]["package"] = "mackerel-agent-latest.msi"
+default["repo-server"]["mackerel-msi"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/mackerel"
 
 default["repo-server"]["directories"] = [
   "#{default["repo-server"]["document-root"]}/packages",
@@ -65,18 +70,16 @@ default["repo-server"]["directories"] = [
   "#{default["repo-server"]["document-root"]}/packages/chef/gems",
   "#{default["repo-server"]["document-root"]}/packages/chef/packages",
   "#{default["repo-server"]["document-root"]}/packages/oracle",
-  "#{default["repo-server"]["mackerel"]["dastination"]}",
+  "#{default["repo-server"]["mackerel-rpm"]["dastination"]}",
+  "#{default["repo-server"]["mackerel-msi"]["dastination"]}",
   "#{default["repo-server"]["centos"]["dastination"]}",
-  "/var/log/rsync",
-  "/var/log/wget"
+  "/var/log/rsync"
 ]
 
 if "#{node["hostname"][-1]}" == "1"
   default["repo-server"]["rsync"]["first"] = true
   default["repo-server"]["centos"]["cron"] = "10 2 1-31/2 * *"
-  default["repo-server"]["mackerel"]["cron"] = "5 2 1-31/2 * *"
 else
   default["repo-server"]["rsync"]["first"] = false
   default["repo-server"]["centos"]["cron"] = "10 2 2-31/2 * *"
-  default["repo-server"]["mackerel"]["cron"] = "5 2 2-31/2 * *"
 end

@@ -123,8 +123,8 @@ end
 #test crontab
 #
 describe file('/etc/crontab') do
-  its(:content) { should match /^10 2.*root sh \/usr\/local\/bin\/rsync-centos-yum-mirror\.sh >> \/var\/log\/rsync\/rsync-centos-yum-mirror\.log/ }
-  its(:content) { should match /^5 2.*root sh \/usr\/local\/bin\/wget-mackerel-package\.sh >> \/var\/log\/wget\/wget-mackerel-package\.log/ }
+  its(:content) { should match /^10 2.*root sh \/usr\/local\/bin\/rsync-centos-yum-mirror\.sh >> \/var\/log\/rsync/rsync-centos-yum-mirror\.log/ }
+  its(:content) { should match /^10 2.*root sh \/usr\/local\/bin\/wget-mackerel-package\.sh >> \/var\/log\/wget/wget-mackerel-package\.log/ }
 end
 
 
