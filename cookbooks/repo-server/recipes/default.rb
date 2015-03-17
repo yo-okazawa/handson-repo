@@ -16,6 +16,7 @@ end
 #service nginx setting
 service 'nginx' do
   supports :status => true, :restart => true, :reload => true
+  action [ :enable, :start ]
 end
 
 #put nginx.conf
@@ -101,10 +102,26 @@ file "/usr/share/nginx/html/check.html" do
   content "html-check OK"
 end
 
+#make check.html file
+file "/usr/share/nginx/html/packages/check.html" do
+  content "html-check OK"
+end
+
 #put shell file
 %w{ centos mackerel-rpm mackerel-msi }.each do |target|
   template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
     source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
+    owner "root"
+    group "root"
+    mode 0744
+    action :create
+  end
+end
+
+#put shell file
+%w{ repo-server-check.sh repo-client-check.sh }.each do |target|
+  cookbook_file "#{node["repo-server"]["shell"]["path"]}/#{target}" do
+    source target
     owner "root"
     group "root"
     mode 0744

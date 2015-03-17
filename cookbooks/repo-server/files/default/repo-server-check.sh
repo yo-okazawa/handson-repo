@@ -25,7 +25,7 @@ command="ps -ef | grep nginx | grep -v grep | wc -l"
 check
 
 word="nginx status"
-command="service nginx status | grep running | wc -l"
+command="service nginx status | grep 'running\|実行中' | wc -l"
 check
 
 word="https port"
