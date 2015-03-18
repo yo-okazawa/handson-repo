@@ -84,6 +84,7 @@ default["repo-server"]["directories"] = [
   "#{default["repo-server"]["document-root"]}/packages/chef/bootstrap",
   "#{default["repo-server"]["document-root"]}/packages/chef/gems",
   "#{default["repo-server"]["document-root"]}/packages/chef/packages",
+  "#{default["repo-server"]["document-root"]}/packages/chef/cookbooks",
   "#{default["repo-server"]["document-root"]}/packages/oracle",
   "#{default["repo-server"]["mackerel"]["log-directory"]}",
   "#{default["repo-server"]["mackerel"]["dastination"]}",
