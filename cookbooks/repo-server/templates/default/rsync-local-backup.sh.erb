@@ -1,0 +1,25 @@
+#!/bin/bash
+date
+rsync \
+--verbose \
+--recursive \
+--links \
+--times \
+--perms \
+--devices \
+--sparse \
+--hard-links \
+--human-readable \
+--progress \
+--delete \
+<%= node["repo-server"]["backup"]["source"] %> \
+<%= node["repo-server"]["backup"]["destination"] %>
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m local-backup fail\n"
+else
+  echo -e "\e[32m[OK]\e[m local-backup success\n"
+fi
+
+echo -e "`date` local-backup finished\n"

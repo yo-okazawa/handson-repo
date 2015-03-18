@@ -1,4 +1,4 @@
-/var/log/rsync/*.log {
+/var/log/mackerel/*.log {
         daily
         missingok
         rotate 180

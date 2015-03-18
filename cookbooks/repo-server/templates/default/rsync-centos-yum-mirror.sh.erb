@@ -25,9 +25,12 @@ rsync \
 --exclude='*' \
 <%= node["repo-server"]["centos"]["source"] %> \
 <%= node["repo-server"]["centos"]["dastination"] %>
+
 if [ $? -ne 0 ]
 then
-  echo "`date` ERROR:centos-mirror-fail"
+  echo -e "\e[31m[NG]\e[m centos-mirror fail\n"
 else
-  echo ""
+  echo -e "\e[32m[OK]\e[m centos-mirror success\n"
 fi
+
+echo -e "`date` centos-mirror finished\n"

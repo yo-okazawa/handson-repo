@@ -108,7 +108,7 @@ file "/usr/share/nginx/html/packages/check.html" do
 end
 
 #put shell file
-%w{ centos mackerel-rpm mackerel-msi }.each do |target|
+%w{ centos mackerel-rpm mackerel-msi backup }.each do |target|
   template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
     source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
     owner "root"
@@ -130,7 +130,7 @@ end
 end
 
 #put logrotate file
-%w{ nginx rsync }.each do |target|
+%w{ nginx rsync mackerel backup }.each do |target|
   cookbook_file "/etc/logrotate.d/#{target}" do
     source target
     owner 'root'
@@ -144,14 +144,16 @@ end
 #
 
 #add crontab
-ruby_block "add_crontab" do
-  block do
-    crondata = "#{node["repo-server"]["centos"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log"]}"
-    if File.open("/etc/crontab").read.index(crondata)
-    else
-      File.open("/etc/crontab","a"){|file|
-       file.puts crondata
-      }
+%w{ mackerel-msi mackerel-rpm centos backup }.each do |target|
+  ruby_block "add_crontab" do
+    block do
+      crondata = "#{node["repo-server"]["#{target}"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log-directory"]}/#{node["repo-server"]["#{target}"]["log"]} 2>&1"
+      if File.open("/etc/crontab").read.index(crondata)
+      else
+        File.open("/etc/crontab","a"){|file|
+         file.puts crondata
+        }
+      end
     end
   end
 end

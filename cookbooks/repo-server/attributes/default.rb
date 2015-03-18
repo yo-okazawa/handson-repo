@@ -44,24 +44,39 @@ default["repo-server"]["packages"] = [
   ["wordpress-4.1.tar.gz", "/packages/chef/packages", "http://wordpress.org/wordpress-4.1.tar.gz", "3743d82698571903382dc223940e712f7bb5cfd20cedba7b7c32c97d470defab"]
 ]
 
-default["repo-server"]["rpm-package"] = "/tmp/nginx-1.7.10-1.el6.ngx.x86_64.rpm"
+default["repo-server"]["rpm-package"] =   "/tmp/nginx-1.7.10-1.el6.ngx.x86_64.rpm"
 default["repo-server"]["document-root"] = "/usr/share/nginx/html"
 default["repo-server"]["shell"]["path"] = "/usr/local/bin"
 
-default["repo-server"]["centos"]["shell"] = "rsync-centos-yum-mirror.sh"
-default["repo-server"]["centos"]["source"] = "rsync://rsync.kddilabs.jp/centos/"
-default["repo-server"]["centos"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/centos/"
-default["repo-server"]["centos"]["log"] = "/var/log/rsync/rsync-centos-yum-mirror.log"
+default["repo-server"]["centos"]["shell"] =         "rsync-centos-yum-mirror.sh"
+default["repo-server"]["centos"]["source"] =        "rsync://rsync.kddilabs.jp/centos/"
+default["repo-server"]["centos"]["dastination"] =   "#{default["repo-server"]["document-root"]}/packages/centos/"
+default["repo-server"]["centos"]["log-directory"] = "/var/log/rsync"
+default["repo-server"]["centos"]["log"] =           "rsync-centos-yum-mirror.log"
 
-default["repo-server"]["mackerel-rpm"]["shell"] = "wget-mackerel-rpm.sh"
-default["repo-server"]["mackerel-rpm"]["source"] = "http://file.mackerel.io/agent/rpm"
-default["repo-server"]["mackerel-rpm"]["package"] = "mackerel-agent-latest.noarch.rpm"
-default["repo-server"]["mackerel-rpm"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/mackerel"
+default["repo-server"]["mackerel"]["log-directory"] = "/var/log/mackerel"
+default["repo-server"]["mackerel"]["dastination"] =   "#{default["repo-server"]["document-root"]}/packages/mackerel"
 
-default["repo-server"]["mackerel-msi"]["shell"] = "wget-mackerel-msi.sh"
-default["repo-server"]["mackerel-msi"]["source"] = "http://file.mackerel.io/agent/msi"
-default["repo-server"]["mackerel-msi"]["package"] = "mackerel-agent-latest.msi"
-default["repo-server"]["mackerel-msi"]["dastination"] = "#{default["repo-server"]["document-root"]}/packages/mackerel"
+default["repo-server"]["mackerel-rpm"]["shell"] =         "get-mackerel-rpm.sh"
+default["repo-server"]["mackerel-rpm"]["source"] =        "http://file.mackerel.io/agent/rpm"
+default["repo-server"]["mackerel-rpm"]["dastination"] =   "#{default["repo-server"]["mackerel"]["dastination"]}"
+default["repo-server"]["mackerel-rpm"]["package"] =       "mackerel-agent-latest.noarch.rpm"
+default["repo-server"]["mackerel-rpm"]["log-directory"] = "#{default["repo-server"]["mackerel"]["log-directory"]}"
+default["repo-server"]["mackerel-rpm"]["log"] =           "get-mackerel-rpm.log"
+
+default["repo-server"]["mackerel-msi"]["shell"] =         "get-mackerel-msi.sh"
+default["repo-server"]["mackerel-msi"]["source"] =        "http://file.mackerel.io/agent/msi"
+default["repo-server"]["mackerel-msi"]["dastination"] =   "#{default["repo-server"]["mackerel"]["dastination"]}"
+default["repo-server"]["mackerel-msi"]["package"] =       "mackerel-agent-latest.msi"
+default["repo-server"]["mackerel-msi"]["log-directory"] = "#{default["repo-server"]["mackerel"]["log-directory"]}"
+default["repo-server"]["mackerel-msi"]["log"] =           "get-mackerel-msi.log"
+
+default["repo-server"]["backup"]["shell"] =         "rsync-local-backup.sh"
+default["repo-server"]["backup"]["source"] =        "#{default["repo-server"]["document-root"]}/packages/chef"
+default["repo-server"]["backup"]["destination"] =   "/var/backups"
+default["repo-server"]["backup"]["log-directory"] = "/var/log/backups"
+default["repo-server"]["backup"]["log"] =           "rsync-local-backup.log"
+default["repo-server"]["backup"]["cron"] =          "15 2 * * *"
 
 default["repo-server"]["directories"] = [
   "#{default["repo-server"]["document-root"]}/packages",
@@ -70,16 +85,22 @@ default["repo-server"]["directories"] = [
   "#{default["repo-server"]["document-root"]}/packages/chef/gems",
   "#{default["repo-server"]["document-root"]}/packages/chef/packages",
   "#{default["repo-server"]["document-root"]}/packages/oracle",
-  "#{default["repo-server"]["mackerel-rpm"]["dastination"]}",
-  "#{default["repo-server"]["mackerel-msi"]["dastination"]}",
+  "#{default["repo-server"]["mackerel"]["log-directory"]}",
+  "#{default["repo-server"]["mackerel"]["dastination"]}",
   "#{default["repo-server"]["centos"]["dastination"]}",
-  "/var/log/rsync"
+  "#{default["repo-server"]["centos"]["log-directory"]}",
+  "#{default["repo-server"]["backup"]["destination"]}",
+  "#{default["repo-server"]["backup"]["log-directory"]}"
 ]
 
 if "#{node["hostname"][-1]}" == "1"
   default["repo-server"]["rsync"]["first"] = true
-  default["repo-server"]["centos"]["cron"] = "10 2 1-31/2 * *"
+  default["repo-server"]["mackerel-msi"]["cron"] = "0 2 1-31/2 * *"
+  default["repo-server"]["mackerel-rpm"]["cron"] = "5 2 1-31/2 * *"
+  default["repo-server"]["centos"]["cron"] =       "10 2 1-31/2 * *"
 else
   default["repo-server"]["rsync"]["first"] = false
-  default["repo-server"]["centos"]["cron"] = "10 2 2-31/2 * *"
+  default["repo-server"]["mackerel-msi"]["cron"] = "0 2 2-31/2 * *"
+  default["repo-server"]["mackerel-rpm"]["cron"] = "5 2 2-31/2 * *"
+  default["repo-server"]["centos"]["cron"] =       "10 2 2-31/2 * *"
 end
