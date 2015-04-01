@@ -1,0 +1,68 @@
+#!/bin/bash
+
+mackerel_directory="<%= node["repo-server"]["mackerel"]["dastination"] %>"
+mackerel_yum_directory="<%= node["repo-server"]["mackerel-yum"]["dastination"] %>"
+gpg_URL="<%= node["repo-server"]["mackerel"]["gpg-url"] %>"
+error_count=0
+
+echo -e "`date` reposync-mackerel start\n"
+
+reposync -r mackerel-i386 -n -t -p ${mackerel_yum_directory}
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m reposync-mackerel-i386 fail\n"
+  error_count=`expr ${error_count} + 1`
+else
+  echo -e "\e[32m[OK]\e[m reposync-mackerel-i386 success\n"
+fi
+
+createrepo ${mackerel_yum_directory}/mackerel-i386
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m createrepo-mackerel-i386 fail\n"
+  error_count=`expr ${error_count} + 1`
+else
+  echo -e "\e[32m[OK]\e[m createrepo-mackerel-i386 success\n"
+fi
+
+reposync -r mackerel-x86_64 -n -t -p ${mackerel_yum_directory}
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m reposync-mackerel-x86_64 fail\n"
+  error_count=`expr ${error_count} + 1`
+else
+  echo -e "\e[32m[OK]\e[m reposync-mackerel-x86_64 success\n"
+fi
+
+createrepo ${mackerel_yum_directory}/mackerel-x86_64
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m createrepo-mackerel-x86_64 fail\n"
+  error_count=`expr ${error_count} + 1`
+else
+  echo -e "\e[32m[OK]\e[m createrepo-mackerel-x86_64 success\n"
+fi
+
+cd ${mackerel_directory}
+curl -O ${gpg_URL}
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m get-gpg-key fail\n"
+  error_count=`expr ${error_count} + 1`
+else
+  echo -e "\e[32m[OK]\e[m get-gpg-key success\n"
+fi
+
+if [ ${error_count} -eq 0 ]
+then
+  echo -e "\e[32m[OK]\e[m reposync-mackerel-all success\n"
+else
+  echo -e "\e[31m[NG]\e[m reposync-mackerel fail (${error_count}/5 fail)\n"
+fi
+
+echo -e "`date` reposync-yum-mackerel finished\n"

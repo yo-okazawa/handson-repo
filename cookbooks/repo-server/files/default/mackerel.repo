@@ -1,0 +1,11 @@
+[mackerel-i386]
+name=mackerel-agent
+baseurl=http://yum.mackerel.io/centos/i386
+gpgcheck=1
+gpgkey=https://mackerel.io/assets/files/GPG-KEY-mackerel
+
+[mackerel-x86_64]
+name=mackerel-agent
+baseurl=http://yum.mackerel.io/centos/x86_64
+gpgcheck=1
+gpgkey=https://mackerel.io/assets/files/GPG-KEY-mackerel

@@ -55,6 +55,17 @@ end
 
 
 #
+#install packages
+#
+
+%w{ createrepo yum-utils }.each do |target|
+  package target do
+    action :install
+  end
+end
+
+
+#
 #make directories
 #
 
@@ -108,7 +119,7 @@ file "/usr/share/nginx/html/packages/check.html" do
 end
 
 #put shell file
-%w{ centos mackerel-rpm mackerel-msi backup }.each do |target|
+%w{ centos mackerel-rpm mackerel-msi backup mackerel-yum }.each do |target|
   template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
     source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
     owner "root"
@@ -129,6 +140,15 @@ end
   end
 end
 
+#put shell file
+cookbook_file "#{node["repo-server"]["mackerel"]["dastination"]}/#{node["repo-server"]["mackerel-set"]["shell"]}" do
+  source #{node["repo-server"]["mackerel-set"]["shell"]}
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
+end
+
 #put logrotate file
 %w{ nginx rsync mackerel backup }.each do |target|
   cookbook_file "/etc/logrotate.d/#{target}" do
@@ -139,12 +159,20 @@ end
   end
 end
 
+#put mackerel.repo file
+cookbook_file "/etc/yum.repos.d/mackerel.repo" do
+  source 'mackerel.repo'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
 #
 #rsync yum mirror configure and do
 #
 
 #add crontab
-%w{ mackerel-msi mackerel-rpm centos backup }.each do |target|
+%w{ mackerel-msi mackerel-rpm mackerel-yum centos backup }.each do |target|
   ruby_block "add_crontab" do
     block do
       crondata = "#{node["repo-server"]["#{target}"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log-directory"]}/#{node["repo-server"]["#{target}"]["log"]} 2>&1"
@@ -159,7 +187,7 @@ end
 end
 
 #rcync mirror centos
-bash "execute shell" do
+bash "execute rsync shell" do
   user "root"
   code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log"]} &"
   only_if {node["repo-server"]["rsync"]["first"]}
@@ -170,4 +198,10 @@ end
   remote_file "#{node["repo-server"]["#{target}"]["dastination"]}/#{node["repo-server"]["#{target}"]["package"]}" do
     source "#{node["repo-server"]["#{target}"]["source"]}/#{node["repo-server"]["#{target}"]["package"]}"
   end
+end
+
+bash "execute mackerel shell" do
+  user "root"
+  code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["mackerel-yum"]["shell"]} >> #{node["repo-server"]["mackerel-yum"]["log-directory"]}/#{node["repo-server"]["mackerel-yum"]["log"]} &"
+  only_if {node["repo-server"]["rsync"]["first"]}
 end
