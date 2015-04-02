@@ -119,7 +119,7 @@ file "/usr/share/nginx/html/packages/check.html" do
 end
 
 #put shell file
-%w{ centos mackerel-rpm mackerel-msi backup mackerel-yum }.each do |target|
+%w{ centos mackerel-rpm mackerel-msi mackerel-tgz backup mackerel-yum }.each do |target|
   template "#{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]}" do
     source "#{node["repo-server"]["#{target}"]["shell"]}.erb"
     owner "root"
@@ -172,7 +172,7 @@ end
 #
 
 #add crontab
-%w{ mackerel-msi mackerel-rpm mackerel-yum centos backup }.each do |target|
+%w{ mackerel-msi mackerel-tgz mackerel-rpm mackerel-yum centos backup }.each do |target|
   ruby_block "add_crontab" do
     block do
       crondata = "#{node["repo-server"]["#{target}"]["cron"]} root sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["#{target}"]["shell"]} >> #{node["repo-server"]["#{target}"]["log-directory"]}/#{node["repo-server"]["#{target}"]["log"]} 2>&1"
@@ -193,8 +193,8 @@ bash "execute rsync shell" do
   only_if {node["repo-server"]["rsync"]["first"]}
 end
 
-#wget mackerel
-%w{ mackerel-rpm mackerel-msi }.each do |target|
+#get mackerel
+%w{ mackerel-rpm mackerel-msi mackerel-tgz }.each do |target|
   remote_file "#{node["repo-server"]["#{target}"]["dastination"]}/#{node["repo-server"]["#{target}"]["package"]}" do
     source "#{node["repo-server"]["#{target}"]["source"]}/#{node["repo-server"]["#{target}"]["package"]}"
   end

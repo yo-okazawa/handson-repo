@@ -1,0 +1,20 @@
+#!/bin/bash
+
+tgz_URL="<%= node["repo-server"]["mackerel-tgz"]["source"] %>/<%= node["repo-server"]["mackerel-tgz"]["package"] %>"
+mackerel_directory="<%= node["repo-server"]["mackerel-tgz"]["dastination"] %>"
+
+
+echo -e "`date` wget-mackerel-package start\n"
+
+cd ${mackerel_directory}
+
+curl -O ${tgz_URL}
+
+if [ $? -ne 0 ]
+then
+  echo -e "\e[31m[NG]\e[m get-mackerel-package-tgz fail\n"
+else
+  echo -e "\e[32m[OK]\e[m get-mackerel-package-tgz success\n"
+fi
+
+echo -e "`date` get-mackerel-package-tgz finished\n"
