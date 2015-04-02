@@ -12,7 +12,7 @@ end
 execute "chef-server-ctl reconfigure"
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['manage']['package']}" do
-  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['manage']['package']}"
+  source "https://#{node['chef-server']['rp1']['url']}/#{node['chef-server']['manage']['package']}"
   checksum "#{node['chef-server']['manage']['checksum']}"
 end
 

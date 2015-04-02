@@ -11,7 +11,7 @@ hostsfile_entry "#{node['chef-server']['rp_vip']['ipaddr']}" do
 end
 
 remote_file "#{node['chef-server']['install_path']}/#{node['chef-server']['anltcs']['package']}" do
-  source "http://#{node['chef-server']['rp1']['fqdn']}/packages/#{node['chef-server']['anltcs']['package']}"
+  source "https://#{node['chef-server']['rp1']['url']}/#{node['chef-server']['anltcs']['package']}"
   checksum "#{node['chef-server']['anltcs']['checksum']}"
 end
 
