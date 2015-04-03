@@ -4,7 +4,7 @@ rpm_URL="<%= node["repo-server"]["mackerel-rpm"]["source"] %>/<%= node["repo-ser
 mackerel_directory="<%= node["repo-server"]["mackerel-rpm"]["dastination"] %>"
 
 
-echo -e "`date` wget-mackerel-package start\n"
+echo -e "`date` get-mackerel-package-rpm start\n"
 
 cd ${mackerel_directory}
 
