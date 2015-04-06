@@ -58,7 +58,7 @@ end
 #install packages
 #
 
-%w{ createrepo yum-utils }.each do |target|
+%w{ createrepo yum-utils wget }.each do |target|
   package target do
     action :install
   end
