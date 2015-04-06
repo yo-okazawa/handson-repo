@@ -6,9 +6,7 @@ mackerel_directory="<%= node["repo-server"]["mackerel-msi"]["dastination"] %>"
 
 echo -e "`date` get-mackerel-package-msi start\n"
 
-cd ${mackerel_directory}
-
-curl -O ${msi_URL}
+wget -N -P ${mackerel_directory} ${msi_URL}
 
 if [ $? -ne 0 ]
 then

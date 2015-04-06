@@ -6,9 +6,7 @@ mackerel_directory="<%= node["repo-server"]["mackerel-rpm"]["dastination"] %>"
 
 echo -e "`date` get-mackerel-package-rpm start\n"
 
-cd ${mackerel_directory}
-
-curl -O ${rpm_URL}
+wget -N -P ${mackerel_directory} ${rpm_URL}
 
 if [ $? -ne 0 ]
 then
