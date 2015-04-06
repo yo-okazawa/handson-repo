@@ -3,7 +3,8 @@
 # Recipe:: attributes/default.rb
 #
 
-default["repo-server"]["rpm-package"] =   "http://nginx.org/packages/mainline/rhel/6/x86_64/RPMS/nginx-1.7.10-1.el6.ngx.x86_64.rpm"
+default["repo-server"]["nginx"]["package"] =   "nginx-1.7.10-1.el6.ngx.x86_64.rpm"
+default["repo-server"]["nginx"]["source"] =   "http://nginx.org/packages/mainline/rhel/6/x86_64/RPMS"
 default["repo-server"]["document-root"] = "/usr/share/nginx/html"
 default["repo-server"]["shell"]["path"] = "/usr/local/bin"
 
@@ -17,22 +18,31 @@ default["repo-server"]["mackerel"]["log-directory"] = "/var/log/mackerel"
 default["repo-server"]["mackerel"]["dastination"] =   "#{default["repo-server"]["document-root"]}/packages/mackerel"
 default["repo-server"]["mackerel"]["gpg-url"] =   "https://mackerel.io/assets/files/GPG-KEY-mackerel"
 
+if "#{node["hostname"][0, 3]}" == "ck2"
+  default["repo-server"]["mackerel"]["yum-url"] =    "http://yum-kcps.mackerel.io/centos"
+  default["repo-server"]["mackerel-rpm"]["source"] = "http://file.mackerel.io/agent-kcps/rpm"
+  default["repo-server"]["mackerel-msi"]["source"] = "http://file.mackerel.io/agent-kcps/msi"
+  default["repo-server"]["mackerel-tgz"]["source"] = "http://file.mackerel.io/agent-kcps/tgz"
+else
+  default["repo-server"]["mackerel"]["yum-url"] =    "http://yum.mackerel.io/centos"
+  default["repo-server"]["mackerel-rpm"]["source"] = "http://file.mackerel.io/agent/rpm"
+  default["repo-server"]["mackerel-msi"]["source"] = "http://file.mackerel.io/agent/msi"
+  default["repo-server"]["mackerel-tgz"]["source"] = "http://file.mackerel.io/agent/tgz"
+end
+
 default["repo-server"]["mackerel-rpm"]["shell"] =         "get-mackerel-rpm.sh"
-default["repo-server"]["mackerel-rpm"]["source"] =        "http://file.mackerel.io/agent/rpm"
 default["repo-server"]["mackerel-rpm"]["dastination"] =   "#{default["repo-server"]["mackerel"]["dastination"]}"
 default["repo-server"]["mackerel-rpm"]["package"] =       "mackerel-agent-latest.noarch.rpm"
 default["repo-server"]["mackerel-rpm"]["log-directory"] = "#{default["repo-server"]["mackerel"]["log-directory"]}"
 default["repo-server"]["mackerel-rpm"]["log"] =           "get-mackerel-rpm.log"
 
 default["repo-server"]["mackerel-msi"]["shell"] =         "get-mackerel-msi.sh"
-default["repo-server"]["mackerel-msi"]["source"] =        "http://file.mackerel.io/agent/msi"
 default["repo-server"]["mackerel-msi"]["dastination"] =   "#{default["repo-server"]["mackerel"]["dastination"]}"
 default["repo-server"]["mackerel-msi"]["package"] =       "mackerel-agent-latest.msi"
 default["repo-server"]["mackerel-msi"]["log-directory"] = "#{default["repo-server"]["mackerel"]["log-directory"]}"
 default["repo-server"]["mackerel-msi"]["log"] =           "get-mackerel-msi.log"
 
 default["repo-server"]["mackerel-tgz"]["shell"] =         "get-mackerel-tgz.sh"
-default["repo-server"]["mackerel-tgz"]["source"] =        "http://file.mackerel.io/agent/tgz"
 default["repo-server"]["mackerel-tgz"]["dastination"] =   "#{default["repo-server"]["mackerel"]["dastination"]}"
 default["repo-server"]["mackerel-tgz"]["package"] =       "mackerel-agent-latest.tar.gz"
 default["repo-server"]["mackerel-tgz"]["log-directory"] = "#{default["repo-server"]["mackerel"]["log-directory"]}"

@@ -8,9 +8,14 @@
 #nginx install and configuration
 #
 
-#install nginx from local package
+#install nginx
+
+remote_file "/tmp/#{node["repo-server"]["nginx"]["package"]}" do
+  source "#{node["repo-server"]["nginx"]["source"]}/#{node["repo-server"]["nginx"]["package"]}"
+end
+  
 rpm_package "nginx" do
-  source "#{node["repo-server"]["rpm-package"]}"
+  source "/tmp/#{node["repo-server"]["nginx"]["package"]}"
 end
 
 #service nginx setting
@@ -160,8 +165,8 @@ end
 end
 
 #put mackerel.repo file
-cookbook_file "/etc/yum.repos.d/mackerel.repo" do
-  source 'mackerel.repo'
+template "/etc/yum.repos.d/mackerel.repo" do
+  source 'mackerel.repo.erb'
   owner 'root'
   group 'root'
   mode '0644'
@@ -189,7 +194,7 @@ end
 #rcync mirror centos
 bash "execute rsync shell" do
   user "root"
-  code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log"]} &"
+  code "sh #{node["repo-server"]["shell"]["path"]}/#{node["repo-server"]["centos"]["shell"]} >> #{node["repo-server"]["centos"]["log-directory"]}/#{node["repo-server"]["centos"]["log"]} &"
   only_if {node["repo-server"]["rsync"]["first"]}
 end
 
