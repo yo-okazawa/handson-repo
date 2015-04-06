@@ -3,12 +3,7 @@
   "default_attributes": {
     "chef-server": {
       "rp1": {
-        "fqdn":"ck2ejo2-vcfrp01.ck2vme1.local",
-        "ipaddr":"10.195.12.8"
-      },
-      "rp2": {
-        "fqdn":"ck2ejo2-vcfrp02.ck2vme1.local",
-        "ipaddr":"10.195.12.9"
+        "url":"ck2ejo2-vcfrp01.ck2vme1.local/packages/chef/packages"
       },
       "rp_vip": {
         "fqdn":"chefrepo.cloud-platform.kddi.ne.jp",
