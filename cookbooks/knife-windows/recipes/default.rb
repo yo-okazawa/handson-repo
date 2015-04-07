@@ -36,3 +36,5 @@ execute "Install gems" do
   action :run
 end
 
+#gem cleanup
+execute "/opt/chef/embedded/bin/gem cleanup"
