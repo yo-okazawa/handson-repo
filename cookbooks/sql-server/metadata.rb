@@ -6,4 +6,4 @@ description      'Installs/Configures sql-server'
 long_description 'Installs/Configures sql-server'
 version          '0.1.0'
 
-depends          "windows"
+depends          "windows", ">= 1.36.6"
