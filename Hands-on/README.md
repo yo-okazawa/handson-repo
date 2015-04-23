@@ -1,11 +1,21 @@
-### Chefハンズオン1
+{{Chef.png|画像のテスト1}}
 
-## 1.Vagrant環境の作成
-- 1-1.Virtual Boxのインストール
-- 1-2.Vagrantのインストール
-- 1-3.Boxの準備
+{{image/Chef.png|画像のテスト2}}
 
-## 2.Vagrant操作
-- 2-1.仮想サーバの立ち上げ
-- 2-2.仮想サーバへの接続
-- 2-3.仮想サーバの停止、破棄
+# Chefハンズオン
+
+## 1.Chefの概要
+
+## 2.Vagrant + chef-soloでWEB Serverを立てる
+
+## 3.WEB ServerのCOOKBOOKを拡張する
+
+## 4.Vagrant plugin, kitchen plugin
+
+## 5.Chef Serverの概要
+
+## 6.WorkStationサーバの利用
+
+## 7.Chef Server リポジトリサーバ活用
+
+## 8.Node管理, Chef Server, リポジトリサーバ運用
