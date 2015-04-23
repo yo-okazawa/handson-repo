@@ -1,0 +1,78 @@
+pcs cluster cib /tmp/pcs_cfg
+
+
+pcs -f /tmp/pcs_cfg \
+  property set stonith-enabled=false
+  
+pcs -f /tmp/pcs_cfg \
+  property set no-quorum-policy=ignore
+  
+pcs -f /tmp/pcs_cfg \
+  property set crmd-transition-delay=2s
+  
+
+pcs -f /tmp/pcs_cfg \
+  resource defaults resource-stickiness="INFINITY" migration-threshold="1"
+
+pcs -f /tmp/pcs_cfg \
+  resource create dbvip ocf:heartbeat:IPaddr2 \
+  ip=<%= node["pgsql_cluster"]["vip"] %> cidr_netmask=<%= node["pgsql_cluster"]["vip_netmask"] %> \
+  nic="eth0" \
+  op monitor interval=10s
+
+
+pcs -f /tmp/pcs_cfg \
+  resource create drbd ocf:linbit:drbd \
+  drbd_resource=<%= node["pgsql_cluster"]["resource"] %> \
+  op monitor interval=30s
+  
+pcs -f /tmp/pcs_cfg \
+  resource master drbd_clone drbd \
+  master-max=1 \
+  master-node-max=1 \
+  clone-max=2 \
+  clone-node-max=1 \
+  notify=true
+  
+
+pcs -f /tmp/pcs_cfg \
+  resource create mount_drbd Filesystem \
+  device="<%= node["pgsql_cluster"]["device"] %>" \
+  directory="<%= node["pgsql_cluster"]["mount_dir"] %>" \
+  fstype="<%= node["pgsql_cluster"]["file_system"] %>"
+
+
+pcs -f /tmp/pcs_cfg \
+  resource create pgsql ocf:heartbeat:pgsql \
+  params pgctl="/usr/bin/pg_ctl" \
+  start_opt="-p 5432 -h 127.0.0.1" \
+  psql="/usr/bin/psql" \
+  pgdata="/data/postgres" pgdba="postgres" pgport="5432" pgdb="template1" \
+  op monitor interval="10s" timeout="60s" \
+  op start interval="0s" timeout="120s" \
+  op stop interval="0s" timeout="120s"
+
+
+
+pcs -f /tmp/pcs_cfg \
+  resource group add db_group mount_drbd pgsql dbvip
+
+
+pcs -f /tmp/pcs_cfg \
+  constraint location add db_location_1 db_group \
+  pos1.h-arai.com 200
+  
+pcs -f /tmp/pcs_cfg \
+  constraint location add db_location_2 db_group \
+  pos2.h-arai.com 100
+  
+
+pcs -f /tmp/pcs_cfg \
+  constraint colocation add db_group drbd_clone INFINITY with-rsc-role=Master
+
+
+pcs -f /tmp/pcs_cfg \
+  constraint order promote drbd_clone then start db_group
+
+
+pcs cluster cib-push /tmp/pcs_cfg

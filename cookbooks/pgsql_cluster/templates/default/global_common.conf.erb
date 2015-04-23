@@ -1,0 +1,9 @@
+global {
+  usage-count no;
+}
+common {
+  protocol C;
+  syncer {
+    rate <%= node["pgsql_cluster"]["rate"] %>;
+  }
+}

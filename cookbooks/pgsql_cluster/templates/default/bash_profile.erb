@@ -1,0 +1,4 @@
+[ -f /etc/profile ] && source /etc/profile
+
+PGDATA=<%= node["pgsql_cluster"]["pgsql_directory"] %>
+export PGDATA
