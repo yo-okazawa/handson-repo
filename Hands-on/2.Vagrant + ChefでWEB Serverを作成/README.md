@@ -1,10 +1,10 @@
 # 1.Vagrant環境の作成
-- 1-1.Virtual Boxのインストール
-- 1-2.Vagrantのインストール
-- 1-3.Boxの準備
+- 1-1.[Virtual Boxのインストール](#markdown-header-1-1virtual-box)
+- 1-2.[Vagrantのインストール](#markdown-header-1-2vagrant)
+- 1-3.[Boxの準備](#markdown-header-1-3box)
 
 # 2.Vagrant操作
-- 2-1.仮想サーバの起動
+- 2-1.[仮想サーバの起動](#markdown-header-2-1)
 - 2-2.仮想サーバへの接続
 - 2-3.仮想サーバの停止、破棄
 
