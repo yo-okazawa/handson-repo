@@ -2,6 +2,10 @@
 
 {{image/Chef.png|画像のテスト2}}
 
+![画像のテスト3](Chef.png)
+
+![画像のテスト4](image.png)
+
 # Chefハンズオン
 
 ## 1.Chefの概要
