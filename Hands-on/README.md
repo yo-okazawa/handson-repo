@@ -1,16 +1,8 @@
-{{Chef.png|画像のテスト1}}
-
-{{image/Chef.png|画像のテスト2}}
-
-![画像のテスト3](Chef.png)
-
-![画像のテスト4](image.png)
-
 # Chefハンズオン
 
 ## 1.Chefの概要
 
-## 2.Vagrant + chef-soloでWEB Serverを立てる
+## 2.Vagrant + ChefでWEB Serverを作成
 
 ## 3.WEB ServerのCOOKBOOKを拡張する
 
