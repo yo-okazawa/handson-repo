@@ -5,13 +5,13 @@
 
 # 2.Vagrant操作
 - 2-1.[仮想サーバの起動](#markdown-header-2-1)
-- 2-2.仮想サーバへの接続
-- 2-3.仮想サーバの停止、破棄
+- 2-2.[仮想サーバへの接続](#markdown-header-2-2)
+- 2-3.[仮想サーバの停止、破棄](#markdown-header-2-3)
 
 # 3.ChefでWEBサーバをインストール
-- 3-1.仮想サーバにchef-clientをインストール
+- 3-1.[仮想サーバにchef-clientをインストール](#markdown-header-3-1chef-client)
 - 3-2.recipeを実行してみる
-- 3-3.ChefでWEBサーバをインストール
+- 3-3.[ChefでWEBサーバをインストール](#markdown-header-3-3chefweb)
 
 ---
 
@@ -211,6 +211,7 @@ Chef: 12.2.1
 ```
 
 ---
+
 ## 3-2.recipeを実行してみる  
 Chef作業用ディレクトリとしてhomeディレクトリ配下にchef-repoを作成します。
 
@@ -264,6 +265,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 既にtest.txtがあるべき状態となっているため、file resourceは実行されません。
 
 ---
+
 ## 3-3.ChefでWEBサーバをインストール  
 WEBサーバをインストールするrecipe(httpd.rb)を作成します。
 
