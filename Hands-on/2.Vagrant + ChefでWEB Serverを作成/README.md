@@ -10,8 +10,8 @@
 
 # 3.ChefでWEBサーバをインストール
 - 3-1.仮想サーバにchef-clientをインストール
-- 3-2.chef-repoを作成
-- 3-3.コミュニティーCOOKBOOKを取得
+- 3-2.recipeを実行してみる
+- 3-3.ChefでWEBサーバをインストール
 
 ---
 
@@ -38,11 +38,14 @@
 ## 1-3.Boxの準備  
 [こちら](http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box)からboxをダウンロードして保存して下さい。（どうしても遅い時は[こちら](https://119.81.145.242/packages/chef/boxes/opscode_centos-6.6_chef-provisionerless.box)）  
 ターミナル(コマンドプロンプト)上で以下のコマンドを実行して、VagrantにダウンロードしたBoxを追加します。  
+
+>```
+$ vagrant box add centos66 <Boxファイルへのパス>
 ```
-$ vagrant box add centos65 <Boxファイルへのパス>
-```
+
 以下のコマンドを実行してBoxが追加されたことを確認します。  
-```
+
+>```
 $ vagrant box list
 centos65 (virtualbox, 0)
 ```
@@ -59,13 +62,13 @@ centos65 (virtualbox, 0)
 * 名前は統一で『vagrant』として下さい。
 
 
-```
+>```
 $ mkdir vagrant
 ```
 
 作成したディレクトリに移動して、以下のコマンドを実行して下さい。  
 
-```
+>```
 $ cd vagrant
 $ vagrant init
 A `Vagrantfile` has been placed in this directory. You are now
@@ -73,20 +76,22 @@ ready to `vagrant up` your first virtual environment! Please read
 the comments in the Vagrantfile as well as documentation on
 `vagrantup.com` for more information on using Vagrant.
 ```
+
 カレントディレクトリにVagrantfileが生成されます。
-```
+
+>```
 $ ls  #Windowsは『dir』
 Vagrantfile
 ```
+
 Vagrantfileをエディタで開いて、以下のように編集して下さい。
 
-```
+>```
  # -*- mode: ruby -*-
  # vi: set ft=ruby :
-
 Vagrant.configure(2) do |config|
   config.vm.box_check_update = false
-  config.vm.box = "centos65"
+  config.vm.box = "centos66"
   config.vm.hostname = "test01"
   config.vm.network "private_network", ip: "192.168.33.101"
 end
@@ -94,16 +99,15 @@ end
 
 以下のコマンドを実行して、仮想サーバを起動します。
 
-```
+>```
 $ vagrant up
 ```
 
 以下のコマンドを実行して、起動中の仮想サーバの状態を確認します。
 
-```
+>```
 $ vagrant status
 Current machine states:
-
 default                   running (virtualbox)
 ```
 
@@ -112,7 +116,7 @@ default                   running (virtualbox)
 ## 2-2.仮想サーバへの接続  
 仮想サーバの接続情報を以下のコマンドで確認します。
 
-```
+>```
 $ vagrant ssh-config
 Host default
   HostName 127.0.0.1
@@ -131,7 +135,7 @@ Host default
 
 実際に接続してみます。
 
-```
+>```
 $ ssh vagrant@localhost -p 2222
 vagrant@localhost's password:
 [vagrant@test01 ~]$ exit
@@ -149,7 +153,7 @@ windowsの場合はTeraterm等のツールで接続して下さい。
 ## 2-3.仮想サーバの停止、破棄  
 仮想サーバを停止する場合は、以下のコマンドを実行します。
 
-```
+>```
 $ vagrant halt
 ==> default: Attempting graceful shutdown of VM...
 ```
@@ -158,7 +162,7 @@ $ vagrant halt
 
 仮想サーバを破棄する場合は、以下のコマンドを実行します。
 
-```
+>```
 $ vagrant destroy
     default: Are you sure you want to destroy the 'default' VM? [y/N] y
 ==> default: Destroying VM and associated drives...
@@ -176,7 +180,7 @@ $ vagrant destroy
 
 仮想サーバを起動して接続します。
 
-```
+>```
 $ vagrant up
 $ vagrant ssh-config
 $ ssh vagrant@localhost -p 2222
@@ -185,14 +189,14 @@ $ ssh vagrant@localhost -p 2222
 
 /vagrantディレクトリに先ほどダウンロードしたパッケージがホスト-ゲスト間で共有されています。
 
-```
+>```
 $ ls /vagrant
 chef-12.2.1-1.el6.x86_64.rpm  Vagrantfile
 ```
 
 chef-clientパッケージをインストールします。
 
-```
+>```
 $ cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp
 $ cd /tmp
 $ ls
@@ -206,9 +210,11 @@ $ chef-client -v
 Chef: 12.2.1
 ```
 
+---
+## 3-2.recipeを実行してみる  
 Chef作業用ディレクトリとしてhomeディレクトリ配下にchef-repoを作成します。
 
-```
+>```
 $ mkdir ~/chef-repo
 $ cd ~/chef-repo
 $ pwd
@@ -217,7 +223,7 @@ $ pwd
 
 chef-repo配下に以下の内容でrecipeを作成します。
 
-```
+>```
 $ cat << EOF > hello.rb
 file 'test.txt' do
   content 'hello world!'
@@ -227,7 +233,7 @@ EOF
 
 以下のコマンドで作成したrecipeを適用します。
 
-```
+>```
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[test.txt] action create
@@ -241,27 +247,124 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 recipeに指定した通りにfileが作成されてることが確認出来ます。
 
-```
+>```
 $ ls
 hello.rb  test.txt
 $ cat test.txt
 hello world!
 ```
 
+もう一度実行してみます。
+
+>```
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[test.txt] action create (up to date)
+```
+
+既にtest.txtがあるべき状態となっているため、file resourceは実行されません。
+
+---
+## 3-3.ChefでWEBサーバをインストール  
+WEBサーバをインストールするrecipe(httpd.rb)を作成します。
+
+>```
+$ cat << EOF > httpd.rb
+package 'httpd' do
+  action :install
+end
+EOF
+```
+
+作成したrecipeを適用します。
+> パッケージのインストールにroot権限が必要になるため、sudoで実行します。
+```
+$ sudo chef-apply httpd.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * yum_package[httpd] action install
+    - install version 2.2.15-39.el6.centos of package httpd
+```
+出力内容からhttpdのパッケージをyumでインストールことが分かります。
+
+httpdの状態を確認してみます。
+
+>```
+$ yum list installed | grep httpd
+httpd.x86_64           2.2.15-39.el6.centos
+httpd-tools.x86_64     2.2.15-39.el6.centos
+$ sudo service httpd status
+httpd is stopped
+$ chkconfig --list httpd
+httpd           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+```
+httpdはインストールされていますが、起動していない、起動設定も有効化されていないことが分かります。
+
+recipe(httpd.rb)を以下のように修正して、サービスを起動、起動設定を有効化してみます。  
+ついでに接続確認用にindex.htmlも配置するようにします。
+
+>```
+$ cat << EOF > httpd.rb
+package "httpd" do
+  action :install
+end
+service "httpd" do
+  action [:enable, :start]
+end
+file "/var/www/html/index.html" do
+  content "<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>"
+end
+EOF
+```
+
+recipeを適用します。
+
+>```
+$ sudo chef-apply httpd.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+以下略
+```
+httpdは既にインストール済みのため、インストールされません。  
+
+httpdの状態を確認してみます。
+
+>```
+$ yum list installed | grep httpd
+httpd.x86_64           2.2.15-39.el6.centos
+httpd-tools.x86_64     2.2.15-39.el6.centos
+$ sudo service httpd status
+httpd (pid  3714) is running...
+$ chkconfig --list httpd
+httpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+$ ls /var/www/html/
+index.html
+$curl http://localhost
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>[vagrant@test01 chef-repo]$ ls /var/www/html/
+index.html
+```
+
+端末のブラウザからのアクセスも確認してみます。  
+http://192.168.33.101/
+
 ---
 
-# 3.Appendix  
+# Appendix  
 
 ---
 
 ## Vagrantの仮想サーバへの接続方法について  
 以下の方法でも接続することが可能です。
 
-```
+>```
 $ vagrant ssh-config >> .ssh_config
 $ vagrant ssh
 [vagrant@test01 ~]$
 ```
 
 ※windows端末の場合はsshコマンドが実行出来る必要があります。(Cygwin, Git Bash等)
-
