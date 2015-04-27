@@ -13,6 +13,12 @@
 - 3-2.[recipeを実行してみる](#markdown-header-3-2recipe)
 - 3-3.[ChefでWEBサーバをインストール](#markdown-header-3-3chefweb)
 
+# 4.recipe適用までの作業を簡略化する
+- 4-1.[chef-clientのインストールを簡略化](#markdown-header-4-1chef-client)
+- 4-2.[ChefDKのインストール](#markdown-header-4-2chefdk)
+- 4-3.[ローカル端末上でCOOKBOOKを作成](#markdown-header-4-3cookbook)
+- 4-4.[recipe適用を簡略化する](#markdown-header-4-4recipe)
+
 ---
 
 # 1.Vagrant環境の作成
@@ -93,7 +99,6 @@ Vagrant.configure(2) do |config|
   config.vm.box_check_update = false
   config.vm.box = "centos66"
   config.vm.hostname = "test01"
-  config.vm.network "private_network", ip: "192.168.33.101"
 end
 ```
 
@@ -190,19 +195,19 @@ $ ssh vagrant@localhost -p 2222
 /vagrantディレクトリに先ほどダウンロードしたパッケージがホスト-ゲスト間で共有されています。
 
 ```
-$ ls /vagrant
+[vagrant@test01 ~]$ ls /vagrant
 chef-12.2.1-1.el6.x86_64.rpm  Vagrantfile
 ```
 
 chef-clientパッケージをインストールします。
 
 ```
-$ cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp
-$ cd /tmp
-$ ls
+[vagrant@test01 ~]$ cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp
+[vagrant@test01 ~]$ cd /tmp
+[vagrant@test01 tmp]$ ls
 chef-12.2.1-1.el6.x86_64.rpm
-$ sudo rpm -ivh chef-12.2.1-1.el6.x86_64.rpm
-$ chef-client -v
+[vagrant@test01 tmp]$ sudo rpm -ivh chef-12.2.1-1.el6.x86_64.rpm
+[vagrant@test01 tmp]$ chef-client -v
 Chef: 12.2.1
 ```
 
@@ -212,16 +217,16 @@ Chef: 12.2.1
 Chef作業用ディレクトリとしてhomeディレクトリ配下にchef-repoを作成します。
 
 ```
-$ mkdir ~/chef-repo
-$ cd ~/chef-repo
-$ pwd
+[vagrant@test01 tmp]$ mkdir ~/chef-repo
+[vagrant@test01 ~]$ cd ~/chef-repo
+[vagrant@test01 chef-repo]$ pwd
 /home/vagrant/chef-repo
 ```
 
 chef-repo配下に以下の内容でrecipeを作成します。
 
 ```
-$ cat << EOF > hello.rb
+[vagrant@test01 chef-repo]$ cat << EOF > hello.rb
 file 'test.txt' do
   content 'hello world!'
 end
@@ -231,7 +236,7 @@ EOF
 以下のコマンドで作成したrecipeを適用します。
 
 ```
-$ chef-apply hello.rb
+[vagrant@test01 chef-repo]$ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[test.txt] action create
     - create new file test.txt
@@ -245,15 +250,16 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 recipeに指定した通りにfileが作成されてることが確認出来ます。
 
 ```
-$ ls
+[vagrant@test01 chef-repo]$ ls
 hello.rb  test.txt
-$ cat test.txt
+[vagrant@test01 chef-repo]$ cat test.txt
 hello world!
 ```
 
 もう一度実行してみます。
 
 ```
+[vagrant@test01 chef-repo]$ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[test.txt] action create (up to date)
 ```
@@ -266,7 +272,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 WEBサーバをインストールするrecipe(httpd.rb)を作成します。
 
 ```
-$ cat << EOF > httpd.rb
+[vagrant@test01 chef-repo]$ cat << EOF > httpd.rb
 package 'httpd' do
   action :install
 end
@@ -275,8 +281,9 @@ EOF
 
 作成したrecipeを適用します。
 > パッケージのインストールにroot権限が必要になるため、sudoで実行します。
+
 ```
-$ sudo chef-apply httpd.rb
+[vagrant@test01 chef-repo]$ sudo chef-apply httpd.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * yum_package[httpd] action install
     - install version 2.2.15-39.el6.centos of package httpd
@@ -286,7 +293,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 httpdの状態を確認してみます。
 
 ```
-$ yum list installed | grep httpd
+[vagrant@test01 chef-repo]$ yum list installed | grep httpd
 httpd.x86_64           2.2.15-39.el6.centos
 httpd-tools.x86_64     2.2.15-39.el6.centos
 $ sudo service httpd status
@@ -300,7 +307,7 @@ recipe(httpd.rb)を以下のように修正して、サービスを起動、起�
 ついでに接続確認用にindex.htmlも配置するようにします。
 
 ```
-$ cat << EOF > httpd.rb
+[vagrant@test01 chef-repo]$ cat << EOF > httpd.rb
 package "httpd" do
   action :install
 end
@@ -320,7 +327,7 @@ EOF
 recipeを適用します。
 
 ```
-$ sudo chef-apply httpd.rb
+[vagrant@test01 chef-repo]$ sudo chef-apply httpd.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
 以下略
 ```
@@ -329,16 +336,16 @@ httpdは既にインストール済みのため、インストールされませ
 httpdの状態を確認してみます。
 
 ```
-$ yum list installed | grep httpd
+[vagrant@test01 chef-repo]$ yum list installed | grep httpd
 httpd.x86_64           2.2.15-39.el6.centos
 httpd-tools.x86_64     2.2.15-39.el6.centos
-$ sudo service httpd status
+[vagrant@test01 chef-repo]$ sudo service httpd status
 httpd (pid  3714) is running...
-$ chkconfig --list httpd
+[vagrant@test01 chef-repo]$ chkconfig --list httpd
 httpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
-$ ls /var/www/html/
+[vagrant@test01 chef-repo]$ ls /var/www/html/
 index.html
-$curl http://localhost
+[vagrant@test01 chef-repo]$ curl http://localhost
 <html>
   <body>
     <h1>hello world</h1>
@@ -348,7 +355,123 @@ index.html
 ```
 
 端末のブラウザからのアクセスも確認してみます。  
-http://192.168.33.101/
+http://<仮想サーバのIPアドレス>/
+
+---
+# 4.recipe適用までの作業を簡略化する
+---
+
+## 4-1.chef-clientのインストールを簡略化  
+Vagrantfileの内容を以下のように編集します。
+
+```
+ # -*- mode: ruby -*-
+ # vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box_check_update = false
+  config.vm.box = "centos66"
+  config.vm.hostname = "test01"
+  config.vm.provision "shell", inline: <<-SHELL
+    chef_check=`rpm -qa | grep chef-12.2.1 | wc -l`
+    if [ $chef_check -eq 0 ] ; then
+      cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp/chef-12.2.1-1.el6.x86_64.rpm
+      rpm -i /tmp/chef-12.2.1-1.el6.x86_64.rpm
+    fi
+  SHELL
+end
+```
+
+仮想サーバを新規で起動してchef-clientがインストールされているか確認してみます。
+
+```
+$ vagrant destroy
+$ vagrant up
+$ ssh vagrant@localhost -p 2222
+[vagrant@test01 ~]$ chef-client -v
+Chef: 12.2.1
+```
+
+## 4-2.ChefDKのインストール  
+[こちら](https://downloads.chef.io/chef-dk/)からインストーラをダウンロードして、インストーラの指示にしたがってインストールして下さい。
+
+## 4-3.ローカル端末上でCOOKBOOKを作成  
+chef-repoを作成
+> vagrantディレクトリの一つ上の階層で作成して下さい。
+
+```
+$ cd ../
+$ mkdir chef-repo
+```  
+
+cookbooksディレクトリを作成
+
+```
+$ cd chef-repo
+$ mkdir cookbooks
+```
+
+以下のコマンドを実行して、COOKBOOK[httpd]を生成
+
+```
+$ knife create httpd -o cookbooks
+$ ls cookbooks
+httpd
+```
+
+httpd/recipe/default.rbをテキストエディタで開いて、以下の内容を追記します。
+
+```
+package "httpd" do
+  action :install
+end
+service "httpd" do
+  action [:enable, :start]
+end
+file "/var/www/html/index.html" do
+  content "<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>"
+end
+```
+
+## 4-4.recipe適用を簡略化する  
+Vagrantfileの内容を以下のように編集します。
+
+```
+ # -*- mode: ruby -*-
+ # vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box_check_update = false
+  config.vm.box = "centos66"
+  config.vm.hostname = "test01"
+  config.vm.provision "shell", inline: <<-SHELL
+    chef_check=`rpm -qa | grep chef-12.2.1-1.el6.x86_64 | wc -l`
+    if [ $chef_check -eq 0 ] ; then
+      cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp/chef-12.2.1-1.el6.x86_64.rpm
+      rpm -i /tmp/chef-12.2.1-1.el6.x86_64.rpm
+    fi
+  SHELL
+  config.vm.provision "chef_solo" do |chef|
+    chef.cookbooks_path = ["../chef-repo/cookbooks"]
+    chef.add_recipe "httpd"
+  end
+end
+```
+
+仮想サーバを新規で起動してchef-clientがインストールされて、recipeが適用されているか確認してみます。
+
+```
+$ vagrant destroy
+$ vagrant up
+$ ssh vagrant@localhost -p 2222
+[vagrant@test01 ~]$ chef-client -v
+[vagrant@test01 ~]$ yum list installed | grep httpd
+[vagrant@test01 ~]$ sudo service httpd status
+[vagrant@test01 ~]$ chkconfig --list httpd
+[vagrant@test01 ~]$ curl http://localhost
+```
 
 ---
 
