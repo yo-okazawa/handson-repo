@@ -391,6 +391,9 @@ $ ssh vagrant@localhost -p 2222
 Chef: 12.2.1
 ```
 
+>今回はvm.provisionに[shell](http://docs.vagrantup.com/v2/provisioning/shell.html)を指定してシェルスクリプトを利用していますが、
+別の方法としてvagrantプラグイン[vagrant-omunibus](https://github.com/chef/vagrant-omnibus)を使った方法もあります。
+
 ## 4-2.ChefDKのインストール  
 [こちら](https://downloads.chef.io/chef-dk/)からインストーラをダウンロードして、インストーラの指示にしたがってインストールして下さい。
 
@@ -459,6 +462,10 @@ Vagrant.configure(2) do |config|
   end
 end
 ```
+
+> 今回はvm.provisionに[chef-solo](http://docs.vagrantup.com/v2/provisioning/chef_solo.html)を指定していますが、
+[chef-zero](http://docs.vagrantup.com/v2/provisioning/chef_zero.html)も指定可能です。  
+chef-zeroについては第5回以降で解説します。
 
 仮想サーバを新規で起動してchef-clientがインストールされて、recipeが適用されているか確認してみます。
 
