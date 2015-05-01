@@ -2,6 +2,7 @@
 - 1-1.[Virtual Boxのインストール](#markdown-header-1-1virtual-box)
 - 1-2.[Vagrantのインストール](#markdown-header-1-2vagrant)
 - 1-3.[Boxの準備](#markdown-header-1-3box)
+- 1-4.[Git Bashをインストール](#markdown-header-1-4git-bash)
 
 # 2.Vagrant操作
 - 2-1.[仮想サーバの起動](#markdown-header-2-1)
@@ -53,8 +54,20 @@ $ vagrant box add centos66 <Boxファイルへのパス>
 
 ```
 $ vagrant box list
-centos65 (virtualbox, 0)
+centos66 (virtualbox, 0)
 ```
+---
+## 1-4.[Git Bashをインストール]  
+> Windowsの場合のみ実施
+
+[こちら](https://msysgit.github.io/)からインストーラをダウンロードし、インストーラの指示に従ってインストールしてください。
+
+インストール完了後、Git BashのbinディレクトリをPathに追加します。
+
+- ファイル名を指定して実行に"sysdm.cpl"と入力
+- 詳細設定タブの環境設定(N)をクリック
+- システム環境変数のPathの編集
+- 末尾に";C:\Program Files (x86)\Git\bin"を追加
 
 ---
 
@@ -63,12 +76,14 @@ centos65 (virtualbox, 0)
 ---
 
 ## 2-1.仮想サーバの起動  
-仮想サーバを起動するためのディレクトリを作成して下さい。  
+ハンズオンで使用するディレクトリを作成して、そのディレクトリ配下に仮想サーバを起動するためのディレクトリを作成して下さい。  
 > * 場所はどこでも可  
-* 名前は統一で『vagrant』として下さい。
+* 名前は統一で『chef-study/vagrant』として下さい。
 
 
 ```
+$ mkdir chef-study
+$ cd chef-study
 $ mkdir vagrant
 ```
 
@@ -99,6 +114,7 @@ Vagrant.configure(2) do |config|
   config.vm.box_check_update = false
   config.vm.box = "centos66"
   config.vm.hostname = "test01"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
 end
 ```
 
@@ -119,39 +135,21 @@ default                   running (virtualbox)
 ---
 
 ## 2-2.仮想サーバへの接続  
-仮想サーバの接続情報を以下のコマンドで確認します。
+仮想サーバの接続情報を".ssh_config"に出力しておきます。
 
 ```
-$ vagrant ssh-config
-Host default
-  HostName 127.0.0.1
-  User vagrant
-  Port 2222
-  UserKnownHostsFile /dev/null
-  StrictHostKeyChecking no
-  PasswordAuthentication no
-  IdentityFile C:/Users/h-arai/vagrant/.vagrant/machines/default/virtualbox/private_key
-  IdentitiesOnly yes
-  LogLevel FATAL
+$ vagrant ssh-config >> .ssh_config
 ```
-
-> localhost(127.0.0.1)のポート2222に接続するということが分かります。  
-> また、接続に使用する鍵ファイルが"C:/Users/h-arai/vagrant/.vagrant/machines/default/virtualbox/private_key"に生成されていることが分かります。
 
 実際に接続してみます。
 
 ```
-$ ssh vagrant@localhost -p 2222
-vagrant@localhost's password:
+$ vagrant ssh
 [vagrant@test01 ~]$ exit
 logout
-Connection to localhost closed.
+Connection to 127.0.0.1 closed.
 $
 ```
-
-> パスワード : vagrant
-
-windowsの場合はTeraterm等のツールで接続して下さい。
 
 ---
 
@@ -187,8 +185,7 @@ $ vagrant destroy
 
 ```
 $ vagrant up
-$ vagrant ssh-config
-$ ssh vagrant@localhost -p 2222
+$ vagrant ssh
 [vagrant@test01 ~]$
 ```
 
@@ -214,7 +211,7 @@ Chef: 12.2.1
 ---
 
 ## 3-2.recipeを実行してみる  
-Chef作業用ディレクトリとしてhomeディレクトリ配下にchef-repoを作成します。
+Chef作業用ディレクトリとしhomeディレクトリ配下にchef-repoを作成します。
 
 ```
 [vagrant@test01 tmp]$ mkdir ~/chef-repo
@@ -288,7 +285,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * yum_package[httpd] action install
     - install version 2.2.15-39.el6.centos of package httpd
 ```
-出力内容からhttpdのパッケージをyumでインストールことが分かります。
+出力内容からhttpdのパッケージをyumでインストールしたことが分かります。
 
 httpdの状態を確認してみます。
 
@@ -355,7 +352,7 @@ index.html
 ```
 
 端末のブラウザからのアクセスも確認してみます。  
-http://<仮想サーバのIPアドレス>/
+http://localhost:8080
 
 ---
 # 4.recipe適用までの作業を簡略化する
@@ -371,6 +368,7 @@ Vagrant.configure(2) do |config|
   config.vm.box_check_update = false
   config.vm.box = "centos66"
   config.vm.hostname = "test01"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.provision "shell", inline: <<-SHELL
     chef_check=`rpm -qa | grep chef-12.2.1 | wc -l`
     if [ $chef_check -eq 0 ] ; then
@@ -386,7 +384,7 @@ end
 ```
 $ vagrant destroy
 $ vagrant up
-$ ssh vagrant@localhost -p 2222
+$ vagrant ssh
 [vagrant@test01 ~]$ chef-client -v
 Chef: 12.2.1
 ```
@@ -399,25 +397,24 @@ Chef: 12.2.1
 
 ## 4-3.ローカル端末上でCOOKBOOKを作成  
 chef-repoを作成
-> vagrantディレクトリの一つ上の階層で作成して下さい。
+> chef-study配下に作成して下さい。
 
 ```
 $ cd ../
-$ mkdir chef-repo
-```  
-
-cookbooksディレクトリを作成
-
-```
+$ pwd
+$ chef gem install knife-solo
+$ knife solo init chef-repo
 $ cd chef-repo
-$ mkdir cookbooks
-```
+$ git init
+$ git add -A
+$ git commit -m "first commit"
+```  
 
 以下のコマンドを実行して、COOKBOOK[httpd]を生成
 
 ```
-$ knife cookbook create httpd -o cookbooks
-$ ls cookbooks
+$ knife cookbook create httpd -o site-cookbooks
+$ ls site-cookbooks
 httpd
 ```
 
@@ -449,6 +446,7 @@ Vagrant.configure(2) do |config|
   config.vm.box_check_update = false
   config.vm.box = "centos66"
   config.vm.hostname = "test01"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.provision "shell", inline: <<-SHELL
     chef_check=`rpm -qa | grep chef-12.2.1-1.el6.x86_64 | wc -l`
     if [ $chef_check -eq 0 ] ; then
@@ -457,7 +455,7 @@ Vagrant.configure(2) do |config|
     fi
   SHELL
   config.vm.provision "chef_solo" do |chef|
-    chef.cookbooks_path = ["../chef-repo/cookbooks"]
+    chef.cookbooks_path = ["../chef-repo/site-cookbooks"]
     chef.add_recipe "httpd"
   end
 end
@@ -470,9 +468,10 @@ chef-zeroについては第5回以降で解説します。
 仮想サーバを新規で起動してchef-clientがインストールされて、recipeが適用されているか確認してみます。
 
 ```
+$ cd ../vagrant
 $ vagrant destroy
 $ vagrant up
-$ ssh vagrant@localhost -p 2222
+$ vagrant ssh
 [vagrant@test01 ~]$ chef-client -v
 [vagrant@test01 ~]$ yum list installed | grep httpd
 [vagrant@test01 ~]$ sudo service httpd status
@@ -480,19 +479,3 @@ $ ssh vagrant@localhost -p 2222
 [vagrant@test01 ~]$ curl http://localhost
 ```
 
----
-
-# Appendix  
-
----
-
-## Vagrantの仮想サーバへの接続方法について  
-以下の方法でも接続することが可能です。
-
-```
-$ vagrant ssh-config >> .ssh_config
-$ vagrant ssh
-[vagrant@test01 ~]$
-```
-
-※windows端末の場合はsshコマンドが実行出来る必要があります。(Cygwin, Git Bash等)

@@ -81,12 +81,6 @@ COOKBOOKのtemplates/default配下にtemplateリソースのsourceで指定し�
 </html>
 ```
 
-ブラウザから確認するためにVagrantfileに以下の設定を追加しておきます。
-
-```
-config.vm.network "forwarded_port", guest: 80, host: 8080
-```
-
 仮想サーバを起動して確認してみます。
 
 ```
