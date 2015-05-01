@@ -2,6 +2,10 @@
 - 1-1.[fileリソースを使用して必要なファイルを設置する](#)
 - 1-2.[templateリソースを使用してhttpd.confを設置する](#)
 - 1-3.[attributesを利用する](#)
+
+# 2.複数のCOOKBOOKを使用する
+- 2-1.[COOKBOOK[iptables]を作成する](#)
+
 ---
 
 # 1.COOKBOOK[httpd]を修正する
@@ -171,3 +175,56 @@ $ vagrant ssh
 ブラウザから(http://localhost:8080/template.html)に接続して確認してみます。
 
 ---
+
+# 2.複数のCOOKBOOKを使用する
+
+---
+
+## 2-1.COOKBOOK[iptables]を作成する  
+knifeコマンドでCOOKBOOKを生成します。
+
+```
+$ cd ../chef-repo
+$ knife cookbook create iptables -o cookbooks
+```
+
+COOKBOOK[iptables]で設定する内容は以下です。
+> iptabesパッケージをインストール  
+> iptablesを有効化  
+> /etc/sysconfig/iptablesを配置(変更があったらiptablesを再起動)
+
+*** recipes/defaults.rb ***
+
+```
+package "iptables" do
+  action :install
+end
+service "iptables" do
+  action [:enable]
+end
+cookbook_file "iptables" do
+  path ""
+  action :create
+  notifies :restart, "service[iptables]", :immediately
+end
+```
+
+*** files/default/iptables ***
+
+```
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [6:432]
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT 
+-A INPUT -s 127.0.0.1/32 -d 127.0.0.1/32 -j ACCEPT 
+-A OUTPUT -s 127.0.0.1/32 -d 127.0.0.1/32 -j ACCEPT 
+COMMIT
+```
+> COMMITの行は改行が必要です。
+
+---
+
+
+

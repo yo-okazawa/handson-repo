@@ -416,7 +416,7 @@ $ mkdir cookbooks
 以下のコマンドを実行して、COOKBOOK[httpd]を生成
 
 ```
-$ knife create httpd -o cookbooks
+$ knife cookbook create httpd -o cookbooks
 $ ls cookbooks
 httpd
 ```
