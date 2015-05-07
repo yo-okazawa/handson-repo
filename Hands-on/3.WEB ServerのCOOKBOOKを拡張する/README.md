@@ -406,12 +406,12 @@ include_recipe 'iptables' if node["platform"] == "centos"
 </html>
 ```
 
-centosとubuntuで異なる点は以下
+ubuntuに対応させるためにrecipeを修正した点は以下
 
-- パッケージインストールに使用するコマンドが違う
-- パッケージ名が違う
-- デフォルトのドキュメントルートが違う
-- httpd.confの場所が違う
+- attributeでOSによって異なる値を設定
+- ubuntuの場合は初回apt-getの前にapt-get updateを実行
+- ubuntuの場合はCOOKBOOK[iptables]を実行しないように設定
+- template.html.erbをPLATFORMも表示するように変更
 
 仮想サーバを起動してrecipeを適用してみます。
 
