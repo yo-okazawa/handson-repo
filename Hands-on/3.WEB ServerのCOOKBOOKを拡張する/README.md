@@ -13,6 +13,7 @@
 
 # 4.TIPS
 - 4-1.[executeリソース使用時に冪等性を持たせる](#)
+- 4-2.[同じリソースを複数回使う時の記述方法](#)
 
 ---
 
@@ -435,7 +436,7 @@ vagrant@test02:~$ ls /var/www/html2/
 
 ---
 
-## executeリソース使用時に冪等性を持たせる
+## 4-1.executeリソース使用時に冪等性を持たせる
 
 test用にCOOKBOOKを作成します。
 
@@ -495,4 +496,92 @@ $ vagrant provision
 $ vagrant ssh
 [vagrant@test01 ~]$ cat /etc/hosts
 [vagrant@test01 ~]$ exit
+```
+
+## 4-2.同じリソースを複数回使う時の記述方法
+
+---
+
+5人のユーザーを作成するrecipeを作成します。
+
+*** site-cookbooks/test/recipe/test02.rb ***
+
+```ruby
+user "user1" do
+  action :create
+end
+user "user2" do
+  action :create
+end
+user "user3" do
+  action :create
+end
+user "user4" do
+  action :create
+end
+user "user5" do
+  action :create
+end
+```
+
+vagrantフォルダのVagrantfileを編集しておきます。
+
+```ruby
+- chef.add_recipe "test::test01"
++ chef.add_recipe "test::test02"
+```
+
+作成したrecipeを適用してみます。
+
+```bash
+$ vagrant up
+$ vagrant ssh
+[vagrant@test01 ~]$ cat /etc/passwd
+[vagrant@test01 ~]$ exit
+```
+
+recipeの記述方法を変更します。
+
+*** site-cookbooks/test/recipe/test02.rb ***
+
+```ruby
+%w{ user1 user2 user3 user4 user5 }.each do | target |
+  user target do
+    action :create
+  end
+end
+```
+
+変更したrecipeを適用してみます。
+
+```bash
+$ vagrant destroy
+$ vagrant up
+$ vagrant ssh
+[vagrant@test01 ~]$ cat /etc/passwd
+[vagrant@test01 ~]$ exit
+```
+
+Attributesを利用して以下のようにしても、同じ結果が得られます。
+
+*** site-cookbooks/test/attributes/default.rb ***
+
+```ruby
+default["test"]["user"] = [
+  "user1",
+  "user2",
+  "user3",
+  "user4",
+  "user5"
+]
+```
+
+*** site-cookbooks/test/recipe/test02.rb ***
+
+```ruby
+node["test"]["user"].each do | target |
+  user target do
+    action :create
+  end
+end
 ```
