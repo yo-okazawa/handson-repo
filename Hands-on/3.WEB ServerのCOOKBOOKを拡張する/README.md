@@ -11,6 +11,9 @@
 - 3-1.[ubuntuのBOXファイルとchef-clientを取得する](#)
 - 3-2.[COOKBOOK[httpd]をubuntuに対応させる](#)
 
+# 4.TIPS
+- 4-1.[executeリソース使用時に冪等性を持たせる](#)
+
 ---
 
 # 1.COOKBOOK[httpd]を修正する
@@ -425,3 +428,71 @@ vagrant@test02:~$ ls /var/www/html2/
 ```
 
 ブラウザから(http://localhost:8080/template.html)に接続して確認してみます。
+
+---
+
+# 4.TIPS
+
+---
+
+## executeリソース使用時に冪等性を持たせる
+
+test用にCOOKBOOKを作成します。
+
+```bash
+$ knife cookbook create test -o site-cookbooks
+```
+
+*** site-cookbooks/test/recipe/test01.rb ***
+
+```ruby
+execute "add hosts" do
+  command "echo '8.8.8.8  google-dns' >> /etc/hosts"
+end
+```
+
+vagrantフォルダのVagrantfileを編集しておきます。
+
+```ruby
+- chef.add_recipe "httpd"
++ chef.add_recipe "test::test01"
+```
+
+作成したrecipeを適用します。
+
+```bash
+$ cd ../vagrant
+$ vagrant up
+$ vagrant ssh
+[vagrant@test01 ~]$ cat /etc/hosts
+[vagrant@test01 ~]$ ping google-dns
+[vagrant@test01 ~]$ exit
+```
+
+今の状態でもう一度recipeを適用してみます。
+
+```bash
+$ vagrant provision
+$ vagrant ssh
+[vagrant@test01 ~]$ cat /etc/hosts
+[vagrant@test01 ~]$ exit
+```
+
+既にhostsに書き込まれていた場合には、追記しないようにrecipeを修正します。
+
+*** site-cookbooks/test/recipe/test01.rb ***
+
+```ruby
+execute "add hosts" do
+  command "echo '8.8.8.8  google-dns' >> /etc/hosts"
+  not_if "grep '8\.8\.8\.8\s*google-dns' /etc/hosts"
+end
+```
+もう一度recipeを適用してみます。
+
+```bash
+$ vagrant provision
+$ vagrant ssh
+[vagrant@test01 ~]$ cat /etc/hosts
+[vagrant@test01 ~]$ exit
+```
