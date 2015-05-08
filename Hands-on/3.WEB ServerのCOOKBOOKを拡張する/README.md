@@ -14,6 +14,7 @@
 # 4.TIPS
 - 4-1.[executeリソース使用時に冪等性を持たせる](#)
 - 4-2.[同じリソースを複数回使う時の記述方法](#)
+- 4-3.[chef-clientの実行を中止させる](#)
 
 ---
 
@@ -584,4 +585,49 @@ node["test"]["user"].each do | target |
     action :create
   end
 end
+```
+
+## 4-3.chef-clientの実行を中止させる
+
+---
+
+centos用のrecipeを、他のOSに適用しようとした場合に実行を中止するrecipeを作成します。
+
+*** site-cookbooks/test/recipe/test03.rb ***
+
+```ruby
+if node["platform"] != "centos"
+  raise "platform is not match!"
+end
+package "httpd" do
+  action :install
+end
+```
+
+実際にcentosとubuntuにそれぞれ適用してみます。
+
+*** vagrant/VagrantFile ***
+
+```ruby
+- chef.add_recipe "test::test02"
++ chef.add_recipe "test::test03"
+```
+
+*** vagrant-ubuntu/VagrantFile ***
+
+```ruby
+- chef.add_recipe "httpd"
++ chef.add_recipe "test::test03"
+```
+
+```bash
+$ cd vagrant
+$ vagrant up
+$ vagrant destroy
+```
+
+```bash
+$ cd vagrant-ubuntu
+$ vagrant up
+$ vagrant destroy
 ```
