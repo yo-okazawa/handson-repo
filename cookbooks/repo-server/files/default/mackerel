@@ -1,9 +1,0 @@
-/var/log/mackerel/*.log {
-        daily
-        missingok
-        rotate 180
-        compress
-        delaycompress
-        notifempty
-        create 644 root root
-}
