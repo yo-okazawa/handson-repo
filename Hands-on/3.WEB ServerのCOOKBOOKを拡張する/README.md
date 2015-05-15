@@ -18,6 +18,20 @@
 
 ---
 
+# 前回の内容
+
+---
+
+![test](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-2-1.png)
+
+![test](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-2-2.png)
+
+![test](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-2-3.png)
+
+![test](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-2-4.png)
+
+---
+
 # 1.COOKBOOK[httpd]を修正する
 
 ---
