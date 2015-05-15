@@ -5,6 +5,13 @@
 - 1-4.[Chef-Clientをインストールする](#)
 - 1-5.[COOKBOOKを適用する](#)
 
+# 2.serverspec
+
+- 2-1.serverspecとは
+- 2-2.serverspec-init
+- 2-3.COOKBOOK[httpd]のテスト用コードを作成
+- 2-4.テスト実施
+
 ---
 
 # 1.vagrant-aws
@@ -187,5 +194,144 @@ $ vagrant provision
 > platformを確認するコマンド -> "ohai | grep platform"  
 > WEBサーバのパッケージ名 -> "httpd"  
 > COOKBOOKを修正した場合は、"vagrant rsync"コマンドを実行してCOOKBOOKを同期して下さい。
+
+---
+
+# 2.serverspec
+
+---
+## 2-1.serverspecとは
+
+serverspecとは -> サーバの状態をテストするためのフレームワーク
+
+### 特徴
+- sshでログインしてリモートでコードを実行
+- エージェントレス
+- OSごとの違いを吸収
+
+---
+
+## 2-2.serverspec-init
+
+通常はruby gemでインストールして利用しますが、前回インストールしたChefDKに付属されていますのでインストールは不要です。
+
+```bash
+$ chef gem list | grep serverspec
+serverspec (2.14.1)
+```
+
+serverspecで利用するファイルのひな形をchef-study/vagrantディレクトリに作成します。
+
+```bash
+$ cd chef-study/vagrant
+$ serverspec-init
+Select OS type:
+
+  1) UN*X
+  2) Windows
+
+Select number: 1
+
+Select a backend type:
+
+  1) SSH
+  2) Exec (local)
+
+Select number: 1
+
+Vagrant instance y/n: y
+Auto-configure Vagrant from Vagrantfile? y/n: y
+ + spec/
+ + spec/default/
+ + spec/default/sample_spec.rb
+ + spec/spec_helper.rb
+ + Rakefile
+ + .rspec
+```
+
+> Select OS type: -> Centosのテストをするので『1』  
+> Select a backend type: -> SSHで接続するので『1』  
+> Vagrant instance y/n: -> vagrant instanceなので『y』  
+> Auto-configure Vagrant from Vagrantfile? y/n: -> Vagrantfileの情報を元にconfigureするので『y』
+
+serverspec-initコマンドで生成されたファイルの内容を確認してみます。
+
+*** ./Rakefile ***
+
+- rakeの定義ファイル
+
+*** ./spec/spec_helper.rb ***
+
+- sshの接続方法等を定義
+
+*** ./spec/default/sample_spec.rb *** 
+
+- テストコードを記載
+
+---
+
+## 2-3.テスト用コードを作成
+
+./spec/default/sample_spec.rbを編集して前回までで作成したCOOKBOOK[httpd]のテスト用コードを作成します。
+
+```ruby
+require "spec_helper"
+
+describe package("httpd") do
+  it { should be_installed }
+end
+
+describe service("httpd") do
+  it { should be_enabled }
+  it { should be_running }
+end
+
+describe port(80) do
+  it { should be_listening }
+end
+
+describe file("/etc/httpd/conf/httpd.conf") do
+  it { should be_file }
+  its(:content) { should match /^DocumentRoot\s\"\/var\/www\/html2\"/ }
+end
+
+describe file("/var/www/html2") do
+  it { should be_directory }
+end
+
+describe file("/var/www/html2/index.html") do
+  it { should be_file }
+end
+
+describe file("/var/www/html2/template.html") do
+  it { should be_file }
+end
+
+describe command('curl -k http://localhost/index.html') do
+  its(:stdout) { should match /hello world/ }
+end
+```
+
+---
+
+## 2-4.テスト実施
+
+初期状態で仮想サーバを立ち上げて、serverspecでtestを実行します。
+
+```bash
+$ vagrant up --no-provision
+$ rake spec
+```
+
+> 全てのテストが失敗したことを確認して下さい(全てRED表示)
+
+今度はプロビジョニングを実行してから、再度テストを実行します。
+
+```bash
+$ vagrant provision
+$ rake spec
+```
+
+> 全てのテストに成功したことを確認して下さい(全てGREEN表示)
 
 
