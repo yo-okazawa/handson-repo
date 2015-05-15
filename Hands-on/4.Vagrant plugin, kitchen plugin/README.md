@@ -11,6 +11,9 @@
 
 ---
 
+![test](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-4-1.png)
+
+
 ## 1-1.vagrant pluginをインストール
 
 以下のコマンドを実行してvagrant pluginをインストールします。
