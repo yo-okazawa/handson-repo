@@ -12,6 +12,11 @@
 - 2-3.COOKBOOK[httpd]のテスト用コードを作成
 - 2-4.テスト実施
 
+# 3.コミュニティーCOOKBOOKを利用する
+- 3-1.コミュニティーCOOKBOOKのダウンロード方法
+- 3-2.コミュニティーCOOKBOOKの探し方
+- 3-3.COOKBOOK間の依存について
+
 # Appendix
 
 - test-kitchen
@@ -337,6 +342,39 @@ $ rake spec
 ```
 
 > 全てのテストに成功したことを確認して下さい(全てGREEN表示)
+
+---
+
+# 3.コミュニティーCOOKBOOKを利用する
+
+---
+
+## 3-1.コミュニティーCOOKBOOKのダウンロード方法
+
+コミュニティーCOOKBOOKは以下のコマンドでインストール可能です。
+
+```bash
+$ cd chef-study/chef-repo
+$ knife cookbook site install <COOKBOOK名>
+```
+
+---
+
+## 3-2.コミュニティーCOOKBOOKの探し方
+
+[こちら](https://supermarket.chef.io/cookbooks-directory)のリンク先で探すことが出来ます。
+
+各COOKBOOKの『View Source』でソースコードを参照できます。
+
+ページから直接DownLoadすることも可能です。
+
+---
+
+## 3-3.COOKBOOK間の依存について
+
+- コミュニティーCOOKBOOKの多くは他のCOOKBOOKに依存しています。
+- metadata.rbまたはREADME.rbを確認すれば、どのCOOKBOOKに依存しているかが確認できます。
+- 依存関係にあるCOOKBOOKは個別でダウンロードしておくか、[Berkshelf](http://berkshelf.com/)を利用してダウンロードして利用します。
 
 ---
 
