@@ -1,9 +1,9 @@
-# 1.[vagrant-aws](#)
-- 1-1.[vagrant pluginをインストール](#)
-- 1-2.[Vagrantfileの準備](#)
-- 1-3.[インスタンスを起動する](#)
-- 1-4.[Chef-Clientをインストールする](#)
-- 1-5.[COOKBOOKを適用する](#)
+# 1.vagrant-aws
+- 1-1.vagrant pluginをインストール
+- 1-2.Vagrantfileの準備
+- 1-3.インスタンスを起動する
+- 1-4.Chef-Clientをインストールする
+- 1-5.COOKBOOKを適用する
 
 # 2.serverspec
 
@@ -11,6 +11,10 @@
 - 2-2.serverspec-init
 - 2-3.COOKBOOK[httpd]のテスト用コードを作成
 - 2-4.テスト実施
+
+# Appendix
+
+- test-kitchen
 
 ---
 
@@ -333,5 +337,156 @@ $ rake spec
 ```
 
 > 全てのテストに成功したことを確認して下さい(全てGREEN表示)
+
+---
+
+# Appendix
+
+---
+
+## test-kitchen
+
+test-kitchenとは…指定したOS上でインフラのコードを実行、テストを行うための統合ツールで、インスタンス起動～COOKBOOK適用～テスト～インスタンス破棄までを一つのコマンドで行うことが可能
+
+*** 今回はvagrant上にcentosを起動～chef-zeroでcookbookを適用(WEBサーバ)～serverspecでテスト実施～インスタンス破棄までをtest-kitchenで行います ***
+
+> test-kitchenはChefDKに同梱されていますので、インストールは不要です。
+
+COOKBOOK[test-kitchen]を生成します。
+
+``` bash
+$ cd chef-study/chef-repo/cookbooks
+$ chef generate cookbook test-kitchen -o cookbooks
+```
+
+> "chef generate cookbook"コマンドでCOOKBOOKのひな形を生成すると、test-kitchen用のテンプレートも同時に生成されます。
+
+- COOKBOOK[test-kitchen]の内容を以下のように修正します。
+
+*** recipes/default.rb ***
+
+```ruby
+package "httpd"
+
+service "httpd" do
+  action [:enable, :start]
+end
+
+file "/var/www/html/index.html" do
+  content "hello world"
+end
+```
+
+*** .kitchen.yml ***
+
+```ruby
+---
+driver:
+  name: vagrant
+  synced_folders: [
+    ["./chef-installer", "/tmp/chef-installer"]
+  ]
+provisioner:
+  chef_omnibus_url: file:///tmp/chef-installer/install.sh
+  name: chef_zero
+  
+platforms:
+
+  - name: centos66
+
+suites:
+  - name: default
+    run_list:
+      - recipe[test-kitchen::default]
+```
+
+*** test/integration/default/serverspec/default_spec.rb ***
+
+```ruby
+require "spec_helper"
+
+describe package("httpd") do
+  it { should be_installed }
+end
+
+describe service("httpd") do
+  it { should be_enabled }
+  it { should be_running }
+end
+
+describe file("/var/www/html/index.html") do
+  it { should be_file }
+  its(:content) { should match /hello world/ }
+end
+```
+
+- COOKBOOK[test-kitchen]ディレクトリの配下にディレクトリを作成します。
+
+```bash
+$ cd test-kitchen
+$ mkdir chef-installer
+```
+
+- chef-installerディレクトリの配下にchef-clientのパッケージ(chef-12.2.1-1.el6.x86_64.rpm)を配置します。
+
+- chef-installer/install.shを作成して、以下のように修正します。
+
+*** chef-installer/install.sh ***
+
+```bash
+sudo rpm -ivh /tmp/chef-installer/chef-12.2.1-1.el6.x86_64.rpm
+```
+
+- centos66のBOX名を以下の名前で新たに追加します。
+
+```bash
+$ vagrant box add opscode-centos66 <boxファイルのパス>
+```
+
+準備が完了したので、実際にkitchef ～コマンドを使用して操作してみます。
+
+> 以下は全てchef-repo/cookbooks/test-kitchenディレクトリ配下で実施
+
+```bash
+$ kitchen create
+```
+
+> インスタンス起動
+
+```bash
+$ kitchen list
+```
+
+> インスタンスのリストを表示
+
+```bash
+$ kitchen converge
+```
+
+> インスタンス起動～プロビジョニング実施(起動済みの場合はプロビジョニングのみ)
+
+```bash
+$ kitchen verify
+```
+
+> テスト実施
+
+```bash
+$ kitchen login
+```
+
+> インスタンスにログイン
+
+```bash
+$ kitchen destroy
+```
+
+> インスタンス破棄
+
+```bash
+$ kitchen test
+```
+
+> インスタンス起動～プロビジョニング～テスト実行～インスタンス破棄
 
 
