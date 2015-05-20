@@ -4,7 +4,12 @@
 
 - 1-1.アカウント作成
 - 1-2.chef-repo作成
-- 1-3.bootstrap実行
+
+# 2.WorkStation操作
+
+- 2-1.bootstrap実行
+- 2-2.COOKBOOKアップロード
+- 2-3.chef-client実行
 
 ---
 
@@ -108,9 +113,18 @@ $ knife client list
 
 ---
 
-## 1-3.bootstrap実行
+# 2.WorkStation操作
+
+---
+
+## 2-1.bootstrap実行
+
+![bootstrap](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-6.png)
 
 以下のコマンドを実行して、bootstrapを実行します。
+
+> nodeにchef-clientをインストール  
+> ChefServerにnodeを登録
 
 ```bash
 $ knife bootstrap <node-ip> -x root -P <password> -t rhel
@@ -123,4 +137,56 @@ $ knife node list
 $ knife client list
 ```
 
+---
+
+## 2-2.COOKBOOKアップロード
+
+![cookbook-upload](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-7.png)
+
+chef-repo/cookbooks配下にCOOKBOOKを作成します。
+
+```bash
+$ cd chef-repo
+$ knife cookbook create <username> -o cookbooks
+```
+
+> ChefServer上でCOOKBOOKの名前の競合を防ぐため、COOKBOOK名はusernameとします。
+
+cookbooks/username/recipes/default.rbを以下のように修正しておきます。
+
+```bash
+log "test" do
+  message "hogehoge"
+  level :info
+end
+```
+
+作成したCOOKBOOKをChefServerにアップロードします。
+
+```bash
+$ knife cookbook list
+$ knife cookbook upload <username>
+$ knife cookbook list
+<username>
+```
+
+---
+
+## 2-3.chef-client実行
+
+![knife-ssh](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-8.png)
+
+以下のコマンドを実行して、nodeのrun_listに作成したCOOKBOOKを追加します。
+
+```bash
+$ knife node list
+$ knife node run_list add <node-name> <username>
+$ knife node show <node-name>
+```
+
+以下のコマンドを実行してインスタンス上のchef-clientを実行します。
+
+```bash
+knife ssh <node-ip> "chef-client" -m -x <user> -P <password>
+```
 
