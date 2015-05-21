@@ -174,7 +174,7 @@ template "/etc/httpd/conf/httpd.conf" do
   notifies :restart, 'service[httpd]', :immediately
 end
 cookbook_file "index.html" do
-  path "\#{node["httpd"]["document_root"]}/index.html"
+  path "#{node["httpd"]["document_root"]}/index.html"
   action :create
 end
 template "#{node["httpd"]["document_root"]}/template.html" do
@@ -324,7 +324,7 @@ Vagrant.configure(2) do |config|
       sudo dpkg -i /tmp/chef_12.2.1-1_amd64.deb
     fi
   SHELL
-  config.vm.provision "chef_zero" do |chef|
+  config.vm.provision "chef_solo" do |chef|
     chef.cookbooks_path = ["../chef-repo/site-cookbooks"]
     chef.add_recipe "httpd"
   end
