@@ -61,6 +61,8 @@ end
 
 COOKBOOKのfiles/default配下にcookbook_fileリソースで指定したファイル名（index.html）のファイルを用意しておきます。
 
+*** httpd/files/default/index.html ***
+
 ```
 <html>
   <body>
@@ -93,6 +95,8 @@ end
 
 COOKBOOKのtemplates/default配下にtemplateリソースのsourceで指定したファイル名（template.html.erb）のファイルを用意しておきます。  
 > [ohai](https://docs.chef.io/ohai.html)が収集した仮想サーバの情報を表示させてみます。
+
+*** httpd/templates/default/template.html.erb ***
 
 ```
 <html>
@@ -170,7 +174,7 @@ template "/etc/httpd/conf/httpd.conf" do
   notifies :restart, 'service[httpd]', :immediately
 end
 cookbook_file "index.html" do
-  path "#{node["httpd"]["document_root"]}/index.html"
+  path "\#{node["httpd"]["document_root"]}/index.html"
   action :create
 end
 template "#{node["httpd"]["document_root"]}/template.html" do
@@ -221,7 +225,7 @@ service "iptables" do
   action [:enable]
 end
 cookbook_file "iptables" do
-  path ""
+  path "/etc/sysconfig/iptables"
   action :create
   notifies :restart, "service[iptables]", :immediately
 end
