@@ -189,6 +189,12 @@ $ vagrant provision
 > WEBサーバのパッケージ名 -> "httpd"  
 > COOKBOOKを修正した場合は、"vagrant rsync"コマンドを実行してCOOKBOOKを同期して下さい。
 
+COOKBOOKの適用に成功したら、以下のコマンドを実行して、インスタンスが削除されることを確認します。
+
+```
+$ vagrant destroy
+```
+
 ---
 
 # 2.serverspec
