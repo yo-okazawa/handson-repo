@@ -37,20 +37,20 @@
 ```bash
 $ vagrant plugin install vagrant-aws
 $ vagrant plugin install dotenv
+$ vagrant plugin install vagrant-omnibus
 ```
 
 ---
 
 ## 1-2.Vagrantfileの準備
 
-vagrant-awsフォルダを作成して、Vagrantfileと.envファイルを作成します。
+vagrant-awsフォルダを作成して、Vagrantfileを作成します。
 
 ```bash
 $ cd chef-study
 $ mkdir vagrant-aws
 $ cd vagrant-aws
-$ vagrant-init
-$ touch .env
+$ vagrant init
 ```
 
 Vagrantfileを編集します。
@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     aws.user_data = "#!/bin/sh\nsed -i -e 's/^Defaults\\s*requiretty/#Defaults  requiretty/g' /etc/sudoers\n"
     
     override.ssh.username = "ec2-user"
-    override.ssh.private_key_path = "~/.ssh/#{ENV["KEY_PAIR"]}.pem"
+    override.ssh.private_key_path = "../.ssh/#{ENV["KEY_PAIR"]}.pem"
   end
 end
 ```
@@ -94,7 +94,8 @@ end
 > ENV[] -> .envファイルで指定した変数を呼び出す  
 > aws.user_data -> sudoの設定変更(vagrantフォルダのrsync同期処理失敗を回避するため、Defaults  requirettyをコメントアウトする)
 
-.envファイルを編集します。
+[こちら](https://119.81.145.242/packages/oracle/.env)からenvファイルをダウンロードしてchef-study/vagrant-aws/.envとして保存します。
+.envファイルTAGS_NAMEの値をchef-study-<name>に修正します。その他の項目は修正不要です。
 
 ```ruby
 TAGS_NAME         = "タグ名(例：chef-study-arai)"
@@ -107,8 +108,6 @@ SUBNET_ID         = "サブネットID"
 SECURITY_GROUPS   = "セキュリティーグループID"
 REGION            = "リージョン"
 ```
-
-.envファイルに記載する情報は[こちら](https://119.81.145.242/packages/oracle/chef-study.env)からダウンロードして下さい。
 
 [こちら](https://119.81.145.242/packages/oracle/chef-study.pem)から秘密キーをダウンロードして、chef-study/.ssh/chef-study.pemに保存して、パーミッションを600に設定します。
 
@@ -146,21 +145,7 @@ $ vagrant ssh
 Vagrant起動時にChef-ClientをインストールするようにVagrantfileに以下を追記します。
 
 ```ruby
-  config.vm.provision "shell", inline: <<-SHELL
-    chef_check=`rpm -qa | grep chef-12.2.1-1.el6.x86_64 | wc -l`
-    if [ $chef_check -eq 0 ] ; then
-      cp /vagrant/chef-12.2.1-1.el6.x86_64.rpm /tmp/chef-12.2.1-1.el6.x86_64.rpm
-      rpm -i /tmp/chef-12.2.1-1.el6.x86_64.rpm
-    fi
-  SHELL
-```
-
-インストールするパッケージファイルをvagrant-awsフォルダ内に配置しておきます。
-
-```bash
-$ cp ../vagrant/chef-12.2.1-1.el6.x86_64.rpm ./
-$ ls
-.  ..  .env   .vagrant  Vagrantfile  chef-12.2.1-1.el6.x86_64.rpm
+config.omnibus.chef_version = "12.2.1"
 ```
 
 以下のコマンドを実行してChef-Clientがインストールされるか確認します。
@@ -183,7 +168,7 @@ Vagrant起動時にCOOKBOOK[httpd]を適用するようにVagrantfileに以下�
 
 ```ruby
   config.vm.provision "chef_solo" do |chef|
-    chef.cookbooks_path = ["../chef-repo/site-cookbooks"]
+    chef.cookbooks_path = ["../chef-repo/cookbooks"]
     chef.add_recipe "httpd"
   end
 ```
