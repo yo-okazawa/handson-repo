@@ -143,6 +143,8 @@ $ knife node list
 $ knife client list
 ```
 
+ChefServerのWEB-UI上でNodesタブをクリックして、bootstrapしたnodeが登録されていることと、対象nodeのAttributesを確認して下さい。
+
 ## カスタムテンプレートについて
 
 bootstrap時に指定しているカスタムテンプレートを使用した際の変更点は以下の通りです。
@@ -159,7 +161,7 @@ bootstrap時に指定しているカスタムテンプレートを使用した�
 chef-repo/cookbooks配下にCOOKBOOKを作成します。
 
 ```bash
-$ cd chef-repo
+(WorkStationサーバ上のchef-repoで実施)
 $ knife cookbook create <username> -o cookbooks
 ```
 
@@ -168,9 +170,15 @@ $ knife cookbook create <username> -o cookbooks
 cookbooks/username/recipes/default.rbを以下のように修正しておきます。
 
 ```bash
-log "test" do
-  message "hogehoge"
-  level :info
+ruby_block "run_count" do
+  block do
+    unless node["run_count"]
+      node.set["run_count"] = 1
+    else
+      node.set["run_count"] = node["run_count"] + 1
+    end
+  end
+  action :run
 end
 ```
 
@@ -180,7 +188,7 @@ end
 $ knife cookbook list
 $ knife cookbook upload <username>
 $ knife cookbook list
-<username>
+<username>   0.1.0
 ```
 
 ---
@@ -193,6 +201,7 @@ $ knife cookbook list
 
 ```bash
 $ knife node list
+$ knife node show <node-name>
 $ knife node run_list add <node-name> <username>
 $ knife node show <node-name>
 ```
@@ -200,6 +209,14 @@ $ knife node show <node-name>
 以下のコマンドを実行してインスタンス上のchef-clientを実行します。
 
 ```bash
-knife ssh <node-ip> "chef-client" -m -x root -i /root/.ssh/id_rsa
+$ knife ssh <node-ip> "chef-client" -m -x root -i /root/.ssh/id_rsa
 ```
+
+以下のコマンドを実行して、nodeのattributeにrun_countがセットされたことを確認します。
+
+```bash
+$ knife search "name:*" --attribute "run_count"
+```
+
+ChefServerのWEB-UI上で、対象nodeのAttributesにrun_countが追加されたことを確認して下さい。
 
