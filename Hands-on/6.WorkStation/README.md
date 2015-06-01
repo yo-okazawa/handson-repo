@@ -121,13 +121,19 @@ $ knife client list
 
 ![bootstrap](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-6.png)
 
+以下のコマンドを実行して、bootstrap時の認証に使用するWorkStationの公開鍵をインスタンスに登録しておきます。
+
+```bash
+$ ssh-copy-id -i /root/.ssh/id_rsa.pub root@<node-ip>
+```
+
 以下のコマンドを実行して、bootstrapを実行します。
 
 > nodeにchef-clientをインストール  
 > ChefServerにnodeを登録
 
 ```bash
-$ knife bootstrap <node-ip> -x root -P <password> -t rhel
+$ knife bootstrap <node-ip> -x root -i /root/.ssh/id_rsa -t rhel
 ```
 
 以下のコマンドを実行して、登録状態を確認します。
@@ -187,6 +193,6 @@ $ knife node show <node-name>
 以下のコマンドを実行してインスタンス上のchef-clientを実行します。
 
 ```bash
-knife ssh <node-ip> "chef-client" -m -x <user> -P <password>
+knife ssh <node-ip> "chef-client" -m -x root -i /root/.ssh/id_rsa
 ```
 
