@@ -143,6 +143,13 @@ $ knife node list
 $ knife client list
 ```
 
+## カスタムテンプレートについて
+
+bootstrap時に指定しているカスタムテンプレートを使用した際の変更点は以下の通りです。
+
+- /etc/hostsにChef-ServerとリポジトリサーバのVIPを登録
+- chef-clientのパッケージ取得先としてリポジトリサーバを指定
+
 ---
 
 ## 2-2.COOKBOOKアップロード
