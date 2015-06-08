@@ -7,9 +7,10 @@
 
 # 2.WorkStation操作
 
-- 2-1.bootstrap実行
-- 2-2.COOKBOOKアップロード
-- 2-3.chef-client実行
+- 2-1.bootstrapとは
+- 2-2.bootstrap実行
+- 2-3.COOKBOOKアップロード
+- 2-4.chef-client実行
 
 ---
 
@@ -19,7 +20,7 @@
 
 ## 1-1.アカウント作成
 
-商用小山環境のChef-ServerのWEB-UIにアクセスして、Chef-Server上にアカウントを作成します。
+Chef-ServerのWEB-UIにアクセスして、Chef-Server上にアカウントを作成します。
 
 WorkStationサーバ経由でChef-ServerのWEB-UIにポートフォワーディングの設定をします。
 
@@ -117,7 +118,54 @@ $ knife client list
 
 ---
 
-## 2-1.bootstrap実行
+## 2-1.bootstrapとは
+
+bootstrapとはnode上にchef-clientをインストールするための、一般的な方法です。
+デフォルトでは、nodeはChefのWEBサイトからchef-clientパッケージをダウンロードするため、
+nodeからChefのWEBサイトにアクセスできる必要があります。
+
+[リンク](https://docs.chef.io/_images/chef_bootstrap.png)の図はknife bootstrapの動作順序を示したものです。
+
+リンクの図を解説します。
+
+### $ knife bootstrap
+
+WorkStationからknife bootstrapコマンドを発行します。
+ターゲットとなるnodeのIPアドレス、またはFQDNを引数としてコマンドを発行します。
+ポート22番を使用して、ターゲットとなるnodeとの間にsshコネクションを確立します。
+ブートストラップテンプレートを使用して、シェルスクリプトが組み立て立てられ、node上で実行されます。
+Windowsのnodeの場合にはknife bootstrap windows winrmコマンドを使用し、
+シェルスクリプトの代わりにバッチを使用します。
+また、接続にはWinRMのポート(5985)を使用します。
+
+### Get the install script from Chef
+
+ブートストラップテンプレートの内容を元に、ChefのWEBサイトからchef-clientパッケージを取得します。
+
+### Install the chef-client
+
+node上でchef-clientパッケージをインストールします。
+
+### Start the chef-client run
+first-boot.json内に書かれた設定でchef-clientを実行します。
+first-boot.jsonはブートストラップテンプレートの内容を元にWorkStationで生成されます。
+
+### Complete the chef-client run
+
+chef-clientがChefServerにHTTPS(443)を使用して、node登録をします。
+通常、初回chef-client実行時はrun_listに何も入っていない状態ですが、
+bootstrap時に--run_listオプションを追加することによって、run_listを指定することが出来ます。
+
+
+### カスタムテンプレートについて
+
+環境に合わせてbootstrapの挙動を変更させるために、カスタムテンプレートを使用します。  
+デフォルトのブートストラップテンプレートとの変更点は以下の通りです。
+
+- /etc/hostsにChef-ServerとリポジトリサーバのVIPを登録
+- chef-clientのパッケージ取得先としてリポジトリサーバを指定
+
+## 2-2.bootstrap実行
 
 ![bootstrap](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-6.png)
 
@@ -145,16 +193,9 @@ $ knife client list
 
 ChefServerのWEB-UI上でNodesタブをクリックして、bootstrapしたnodeが登録されていることと、対象nodeのAttributesを確認して下さい。
 
-## カスタムテンプレートについて
-
-bootstrap時に指定しているカスタムテンプレートを使用した際の変更点は以下の通りです。
-
-- /etc/hostsにChef-ServerとリポジトリサーバのVIPを登録
-- chef-clientのパッケージ取得先としてリポジトリサーバを指定
-
 ---
 
-## 2-2.COOKBOOKアップロード
+## 2-3.COOKBOOKアップロード
 
 ![cookbook-upload](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-7.png)
 
@@ -193,7 +234,7 @@ $ knife cookbook list
 
 ---
 
-## 2-3.chef-client実行
+## 2-4.chef-client実行
 
 ![knife-ssh](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-8.png)
 
