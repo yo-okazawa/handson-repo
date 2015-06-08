@@ -197,6 +197,10 @@ ChefServerのWEB-UI上でNodesタブをクリックして、bootstrapしたnode�
 
 ## 2-3.COOKBOOKアップロード
 
+ChefServer環境では、COOKBOOKはChefServerからnodeにダウンロードされて使用されます。  
+そのため、作成したCOOKBOOKはWorkStationからChefServerにアップロードする必要があります。  
+また、COOKBOOKはorganization内で共有されるため、同じorganizationに所属している他のUserがアップロードしたCOOKBOOKを利用したり、ダウンロードしたりすることが出来ます。
+
 ![cookbook-upload](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-7.png)
 
 chef-repo/cookbooks配下にCOOKBOOKを作成します。
