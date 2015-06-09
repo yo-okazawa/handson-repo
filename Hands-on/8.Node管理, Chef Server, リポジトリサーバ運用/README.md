@@ -34,36 +34,11 @@ ChefServerを活用して、脆弱性の確認と修正パッチの適用を一�
 
 ## 1-2.事前準備
 
-workstation上で以下のコマンドを実行して、/root/.ssh配下にキーファイルを生成しておきます。
-
-```bash
-$ pwd
-/root
-$ mkdir .ssh
-$ cd .ssh
-$ ssh-keygen -t rsa
-$ chmod 600 id_rsa
-```
-
-> keyの保存先は./id_rsaパスフレーズは無しで生成します。
-
 以下のコマンドを実行して、COOKBOOK[centos_base]を作成します。
 
 ```bash
 $ cd /home/<username>/chef-repo
 $ knife cookbook create centos_base -o cookbooks
-```
-
-centos_baseのrecipes配下にuser.rbを作成して、以下のように記述します。
-
-**cookbooks/centos_base/recipes/ssh.rb**
-
-```ruby
-# nodeの/root/.ssh/authorized_keysにworkstationの公開鍵を登録
-file "/root/.ssh/authorized_keys" do
-  content "<ssh-keygenで生成されたid_rsa.pubの内容>"
-  action :create
-end
 ```
 
 centos_baseのrecipes配下にip_get.rbを作成して、以下のように記述します。
@@ -99,7 +74,7 @@ ruby_block "check nginx version" do
     nginx_version = `rpm -q nginx`
     if md = nginx_version.match(/-(\d+\.\d+\.\d+)-/)
       node.set["centos_base"]["nginx"]["version"] =  md[1]
-      if node["centos_base"]["nginx"]["version"].gsub(/\./, "").to_i <= 162 then
+      if node["centos_base"]["nginx"]["version"].gsub(/\./, "").to_i <= 179 then
         node.set["centos_base"]["nginx"]["check"] = 1
       end
     end
@@ -109,19 +84,19 @@ ruby_block "check nginx version" do
 end
 ```
 
-centos_baseのrecipes配下にcheck.rbを作成して、以下のように記述します。
+centos_baseのrecipes配下にpatch.rbを作成して、以下のように記述します。
 
 **cookbooks/centos_base/recipes/patch.rb**
 
 ```ruby
-remote_file "/tmp/nginx-1.6.3-1.el6.ngx.x86_64.rpm" do
-  source "http://nginx.org/packages/rhel/6/x86_64/RPMS/nginx-1.6.3-1.el6.ngx.x86_64.rpm"
+remote_file "/tmp/nginx-1.8.0-1.el6.ngx.x86_64.rpm" do
+  source "http://nginx.org/packages/centos/6/x86_64/RPMS/nginx-1.8.0-1.el6.ngx.x86_64.rpm"
   action :create
   only_if { node["centos_base"]["nginx"]["check"] == 1 }
 end
 
-rpm_package "nginx-1.6.3-1.el6.ngx.x86_64.rpm" do
-  source "/tmp/nginx-1.6.3-1.el6.ngx.x86_64.rpm"
+rpm_package "nginx-1.8.0-1.el6.ngx.x86_64.rpm" do
+  source "/tmp/nginx-1.8.0-1.el6.ngx.x86_64.rpm"
   action :install
   only_if { node["centos_base"]["nginx"]["check"] == 1 }
 end
@@ -131,7 +106,9 @@ end
 
 ```bash
 $ ssh root@<ipaddress>
-$ rpm -ivh <package_name> http://nginx.org/packages/rhel/6/x86_64/RPMS/<package_name>
+$ rpm -ivh nginx-1.7.10-1.el6.ngx.x86_64.rpm http://119.81.145.242/packages/chef/packages/nginx-1.7.10-1.el6.ngx.x86_64.rpm
+# または
+$ rpm -ivh nginx-1.7.11-1.el6.ngx.x86_64.rpm http://119.81.145.242/packages/chef/packages/nginx-1.7.11-1.el6.ngx.x86_64.rpm
 $ exit
 ```
 
@@ -140,11 +117,10 @@ centos_baseのrecipes配下のdefault.rbを、以下のように記述します�
 **cookbooks/centos_base/recipes/default.rb**
 
 ```ruby
-include_recipe "ssh"
 include_recipe "ip_get"
 ```
 
-各nodeのrun_listにrecipe[cent_os]を追加して、適用しておきます。
+各nodeのrun_listにrecipe[centos_base]を追加して、適用しておきます。
 
 ```bash
 $ knife cookbook upload centos_base
@@ -173,7 +149,6 @@ recipeは事前準備で作成しておいたので、centos_base適用時にche
 **cookbooks/centos_base/recipes/default.rb**
 
 ```ruby
-include_recipe "ssh"
 include_recipe "ip_get"
 include_recipe "check"
 ```
@@ -207,7 +182,6 @@ recipeは事前準備で作成しておいたので、centos_base適用時にpat
 **cookbooks/centos_base/recipes/default.rb**
 
 ```ruby
-include_recipe "ssh"
 include_recipe "ip_get"
 include_recipe "check"
 include_recipe "patch"
@@ -217,7 +191,7 @@ include_recipe "check"
 
 ### 全nodeに対してrecipe[patch]を適用
 
-以下のコマンドを実行して全nodeのchef-clientを実行します（patch.rbによって1.6.2以下のnginxは1.6.3にアップデートされる）
+以下のコマンドを実行して全nodeのchef-clientを実行します
 
 ```bash
 knife ssh "name:*" "chef-client" -a centos_base.ipaddress.1 -x root -i /root/.ssh/id_rsa
