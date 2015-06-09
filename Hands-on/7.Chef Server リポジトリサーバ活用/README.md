@@ -1,15 +1,164 @@
-# 1.リポジトリサーバについて
+# 1.ChefServer活用
 
-- 1-1.リポジトリサーバの用途
-- 1-2.リポジトリサーバを活用したrecipe例
-
----
-
-# 1.リポジトリサーバについて
+- 1-1.knifeコマンド
 
 ---
 
-## 1-1.リポジトリサーバの用途
+# 1.ChefServer活用
+
+---
+
+## 1-1.knifeコマンド
+
+knifeコマンドはChefServerまたは、ローカルのchef-repoとのインターフェースを提供するコマンドラインツールです。
+情報の表示や操作に使用します。
+
+主なknifeコマンドをご紹介します。
+
+### knife client
+
+clientに関する情報の確認と操作を行います。
+
+```bash
+# clientの一覧を表示
+$ knife client list
+# clientの情報を表示
+$ knife client show <client_name>
+# clientを削除
+($ knife client delete <client_name)
+```
+
+### knife node
+
+node に関する情報の確認と操作を行います。
+
+```bash
+# nodeの一覧を表示
+$ knife node list
+# nodeの情報を表示
+$ knife node show <node_name>
+# nodeの情報を全て表示
+$ knife node show -l <node_name>
+# nodeを削除
+($ knife node delete <node_name>)
+```
+
+### knife cookbook
+
+COOKBOOKに関する情報の確認と操作を行います。
+
+```bash
+# cookbookの一覧を表示
+$ knife cookbook list
+# ローカルのcookbookをChefServerにアップロード
+$ knife cookbook upload <cookbook>
+# ChefServer上のCOOKBOOKをダウンロード
+$ knife cookbook download <cookbook>
+# ChefServer上のCOOKBOOKを削除
+($ knife cookbook delete <cookbook>)
+```
+
+
+### knife ssl
+
+サーバのssl証明書の確認やローカルへの登録を行います。
+
+登録した証明書はchef-repo/.chef/trusted_certs配下に保存されます。
+
+登録した証明書はbootstrap時にnodeに転送されます。
+
+```bash
+# 証明書の確認
+$ knife ssl check -s <url>
+# 証明書の登録
+$ knife ssl fetch -s <url>
+```
+
+### knife ssh
+
+ssh接続でnodeに対してコマンドを実行します。
+searchクエリを使用して、特定のnodeに対して平行してコマンドを実行することが可能です。
+
+```bash
+# 指定したIPアドレスのnode上でdateコマンドを実行
+$ knife ssh <node_ip> "date" -m -x root -i /root/.ssh/id_rsa
+# 全てのnode上でdateコマンドを実行
+$ knife ssh "name:*" "date" -x root -i /root/.ssh/id_rsa
+```
+
+### knife list
+
+nodeのサマリ情報と直近でchef-clientを実行した時間が表示されます。
+
+```bash
+# nodeのサマリ情報を表示
+$ knife list
+```
+
+### knife tag
+
+タグに関する操作を行います。
+
+```bash
+# nodeに対してタグを付与
+$ knife tag create <nodename> <tagname>
+# nodeのタグを確認
+$ knife tag list <nodename>
+# nodeの情報を確認(タグ含む)
+$ knife node show <nodename>
+# nodeのタグを削除
+$ knife tag delete <nodename> <tagname>
+```
+
+### knife search
+
+検索クエリを使用して、ChefServer内の情報を検索します。
+検索に使用できる値は、knife node show -l <node_name>で確認出来ます。
+
+```bash
+# knife search "search query"
+# knife search "<key>:<value>"
+# 『*』は0文字以上の文字に一致
+# 『?』は1文字の文字に一致
+$ knife search "*:*"
+
+# fqdnの値にaを含むものを検索
+$ knife search "fqdn:*a*"
+
+# 複数条件(AND OR)
+# fqdnの値にaを含む OR ipの値が10で始まるものを検索
+$ knife search "fqdn:*a* OR ip:10*"
+# fqdnの値にaを含む AND ipの値が10で始まるものを検索
+$ knife search "fqdn:*a* AND ip:10*"
+
+# 否定(NOT)
+# fqdnの値がaではないものを検索
+$ knife search "(NOT fqdn:a)"
+
+# ネストされたkeyを使用する場合は『_』で接続する
+# node["kernel"]["name"]がLinuxのものを検索
+$ knife search "kernel_name:Linux"
+
+# 特定のattributeを表示(-a または --attribute)
+# node["kernel"]["name"]がLinuxのものを検索して、
+# node["kernel"]["name"]を表示
+$ knife search "kernel_name:Linux" -a kernel.name
+# 全nodeのnetwork情報を表示
+$ knife search "*:*" -a network.interfaces
+```
+
+# 2.リポジトリサーバについて
+
+- 2-1.リポジトリサーバの用途
+- 2-2.リポジトリサーバを活用したrecipe例
+
+---
+
+# 2.リポジトリサーバについて
+
+---
+
+## 2-1.リポジトリサーバの用途
 
 インターネットに接続出来ないインスタンスに対して、必要なパッケージを提供します。
 また、インターネット上に存在しないパッケージやファイルをリポジトリサーバに配置しておいて、利用することが可能です。
@@ -26,7 +175,7 @@
 
 ---
 
-## 1-2.リポジトリサーバを活用したrecipe例
+## 2-2.リポジトリサーバを活用したrecipe例
 
 リポジトリサーバを活用したrecipeのサンプルとしてwordpressを解説します。
 
