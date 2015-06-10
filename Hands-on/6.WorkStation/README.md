@@ -55,7 +55,7 @@ Administration -> Organizations -> organizationを選択 -> Generate Knife Confi
 WorkStationサーバにログインして/home配下にユーザーごとのディレクトリを作成します。
 
 ```bash
-$ ssh -l root@<WorkStationサーバのIPアドレス>
+$ ssh root@<WorkStationサーバのIPアドレス>
 $ cd /home
 $ mkdir <username>
 $ cd <username>
@@ -120,7 +120,7 @@ $ knife client list
 
 ## 2-1.bootstrapとは
 
-bootstrapとはnode上にchef-clientをインストールするための、一般的な方法です。
+bootstrapとはnode上にchef-clientをインストールするための方法です。
 デフォルトでは、nodeはChefのWEBサイトからchef-clientパッケージをダウンロードするため、
 nodeからChefのWEBサイトにアクセスできる必要があります。
 
@@ -169,7 +169,7 @@ bootstrap時に--run_listオプションを追加することによって、run_
 
 ![bootstrap](https://raw.github.com/wiki/urasoko/handson-repo/images/HandsOn-6-6.png)
 
-以下のコマンドを実行して、bootstrap時の認証に使用するWorkStationの公開鍵をインスタンスに登録しておきます。
+以下のコマンドを実行して、bootstrap時の認証に使用するため、WorkStationの公開鍵をインスタンスに登録しておきます。
 
 ```bash
 $ ssh-copy-id -i /root/.ssh/id_rsa.pub root@<node-ip>
@@ -247,7 +247,7 @@ $ knife cookbook list
 ```bash
 $ knife node list
 $ knife node show <node-name>
-$ knife node run_list add <node-name> <username>
+$ knife node run_list add <node-name> <COOKBOOK>
 $ knife node show <node-name>
 ```
 
@@ -265,3 +265,11 @@ $ knife search "name:*" --attribute "run_count"
 
 ChefServerのWEB-UI上で、対象nodeのAttributesにrun_countが追加されたことを確認して下さい。
 
+以下のコマンドを実行して、chef-clientの実行結果を確認します。
+
+```bash
+$ knife runs list
+$ knife runs show <run_id>
+```
+
+ChefServerのWEB-UI上のReportsタブでchef-clientの実行結果を確認して下さい。
