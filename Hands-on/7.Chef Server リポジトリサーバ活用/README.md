@@ -83,16 +83,16 @@ searchクエリを使用して、特定のnodeに対して平行してコマン�
 # 指定したIPアドレスのnode上でdateコマンドを実行
 $ knife ssh <node_ip> "date" -m -x root -i /root/.ssh/id_rsa
 # 全てのnode上でdateコマンドを実行
-$ knife ssh "name:*" "date" -x root -i /root/.ssh/id_rsa
+$ knife ssh "name:*" "date" -x root -i /root/.ssh/id_rsa -a ipaddress
 ```
 
-### knife list
+### knife status
 
 nodeのサマリ情報と直近でchef-clientを実行した時間が表示されます。
 
 ```bash
 # nodeのサマリ情報を表示
-$ knife list
+$ knife status
 ```
 
 ### knife tag
@@ -122,18 +122,18 @@ $ knife tag delete <nodename> <tagname>
 # 『?』は1文字の文字に一致
 $ knife search "*:*"
 
-# fqdnの値にaを含むものを検索
-$ knife search "fqdn:*a*"
+# recipesの値にaを含むものを検索
+$ knife search "recipes:*a*"
 
 # 複数条件(AND OR)
-# fqdnの値にaを含む OR ipの値が10で始まるものを検索
-$ knife search "fqdn:*a* OR ip:10*"
-# fqdnの値にaを含む AND ipの値が10で始まるものを検索
-$ knife search "fqdn:*a* AND ip:10*"
+# recipesの値にaを含む OR ipaddressの値が10で始まるものを検索
+$ knife search "recipes:*a* OR ipaddress:10*"
+# recipesの値にaを含む AND ipaddressの値が10で始まるものを検索
+$ knife search "recipes:*a* AND ipaddress:10*"
 
 # 否定(NOT)
-# fqdnの値がaではないものを検索
-$ knife search "(NOT fqdn:a)"
+# recipesの値にaを含まないものを検索
+$ knife search "(NOT recipes:*a*)"
 
 # ネストされたkeyを使用する場合は『_』で接続する
 # node["kernel"]["name"]がLinuxのものを検索
@@ -391,9 +391,16 @@ $ knife ssh <node-ip> "chef-client" -m -x root -i /root/.ssh/id_rsa
 
 > 出力されたログを確認して、期待通りの動作がされていることを確認して下さい。
 
+wordpressのWEBページにアクセスするため、WorkStationサーバ経由でポートフォワードの設定をします。
+
+```bash
+$ ssh -L 80:127.0.0.1:<port> -l root <workstation_ip>
+$ ssh -L <port>:127.0.0.1:80 -l root <node_ip>
+```
+
 以下のURLにアクセスして、初期設定画面で必要な情報を入力して、正しく動作することを確認して下さい。
 
-- http://node-ip/wdp/wp-admin/install.php
+- http://localhost/wdp/wp-admin/install.php
 
 ChefServerのWEB-UIから適用状況の確認を行います。
 
