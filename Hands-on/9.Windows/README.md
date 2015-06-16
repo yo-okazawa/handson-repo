@@ -166,5 +166,124 @@ depends 'windows'
 
 ※『2-2.COOKBOOK[windows-fileserver]を作成』では、COOKBOOK[windows]のwindows_featureリソースを使用します。
 
+---
 
+## 2.Windowsインスタンスのプロビジョニング
 
+---
+
+### 2-1.Windowsインスタンスをbootstrap
+
+WorkStationにログインしてwindowsインスタンスをbootstrapします。
+
+> Windowsインスタンスをbootstrapする場合にはknife bootstrap windowsコマンドを使用します。
+
+```bash
+# WorkStationにログイン
+$ ssh root@<workstation ipaddress>
+$ cd /home/<username>/chef-repo
+# bootstrap前のnode,client listを確認
+$ knife node list
+$ knife client list
+# bootstrap実行
+$ knife bootstrap windows winrm <node ip> -x administrator -P <password> -d win -N <nodename>
+# bootstrap後にnode,client listを確認
+$ knife node list
+$ knife client list
+```
+
+ChefServerのWEB-GUI上でnodeの状態を確認するために、ポートフォワードの設定をします。
+
+```bash
+# ローカル端末上で実施
+$ ssh -L 443:<Chef-ServerのVIP>:443 -l root <WorkStationサーバのIPアドレス>
+```
+
+以下のURLにアクセスして、Nodesタブから登録したnodeの情報を確認します。
+
+- https://localhost
+
+---
+
+2-2.COOKBOOK[windows-fileserver]を作成
+
+windowsインスタンスをプロビジョニングするためのCOOKBOOKを作成します。
+
+今回作成するCOOKBOOKの動作の概要は以下の通りです。
+
+- SMBを使用して、特定のユーザーのみがアクセス可能な共有ディレクトリを作成する。(ファイルサーバ)
+- 共有ディレクトリを使用するユーザーはパスワード付きで作成
+
+以下のコマンドを実行してCOOKBOOKを作成します。
+
+```bash
+# workstationのchef-repoで実施
+$ knife cookboook create <windows-fileserver-<username>> -o cookbooks
+```
+
+COOKBOOKの内容を以下のように修正します。
+
+***metadata.rb***
+
+以下を追記(COOKBOOK[windows]はChefserver上にアップロード済みです。)
+
+```ruby
+depends "windows"
+```
+
+***recipes/default.rb***
+
+```ruby
+# SMBのプロトコルをインストール
+windows_feature "SMB1Protocol" do
+  action :install
+end
+
+# ユーザを作成(パスワードは任意のものを指定して下さい)
+user "test01" do
+  password "hoge"
+  action :create
+end
+
+# 共有するディレクトリを作成
+directory "C:/test" do
+  action :create
+end
+
+# 共有設定(共有名 => share  ディレクトリ => c:\test  ユーザー => test01 権限 => フルコントロール)
+powershell_script "name_of_script" do
+  code "New-SmbShare share C:\\test -FullAccess test01"
+end
+```
+
+---
+
+### 2-3.recipeを適用する
+
+以下のコマンドを実行して、nodeのrun_listに作成したCOOKBOOKを追加します。
+
+```bash
+# workstationのchef-repoで実施
+$ knife node list
+$ knife node show <node name>
+$ knife node run_list add <node name> <cookbook name>
+$ knife node show <node name>
+```
+
+以下のコマンドを実行して、node上でchef-clientを実行します。
+
+```bash
+$ knife winrm <node up> "chef-client" -m -x Administrator -P 'password'
+```
+
+以下のコマンドを実行して、chef-clientの実行結果を確認します。
+
+```bash
+$ knife node list
+$ knife runs list <node name>
+$ knife runs show <run id>
+```
+
+ChefServerのWEB-UI上でも実行結果を確認して下さい。
+
+ローカル端末からもファイル共有サーバにSMBアクセスが出来るかを確認して下さい。
