@@ -74,7 +74,7 @@ ruby_block "check nginx version" do
     nginx_version = `rpm -q nginx`
     if md = nginx_version.match(/-(\d+\.\d+\.\d+)-/)
       node.set["centos_base"]["nginx"]["version"] =  md[1]
-      if node["centos_base"]["nginx"]["version"].gsub(/\./, "").to_i <= 179 then
+      if node["centos_base"]["nginx"]["version"].gsub(/\./, "").to_i <= 1710 then
         node.set["centos_base"]["nginx"]["check"] = 1
       end
     end
