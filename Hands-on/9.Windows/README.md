@@ -235,7 +235,7 @@ depends "windows"
 
 ```ruby
 # SMBのプロトコルをインストール
-windows_feature "SMB1Protocol" do
+windows_feature "File-Services" do
   action :install
 end
 
@@ -253,6 +253,11 @@ end
 # 共有設定(共有名 => share  ディレクトリ => c:\test  ユーザー => test01 権限 => フルコントロール)
 powershell_script "name_of_script" do
   code "New-SmbShare share C:\\test -FullAccess test01"
+end
+
+# firewall設定
+execute "open firewall port" do
+  command "netsh advfirewall firewall set rule \"name=ファイルとプリンターの共有 (SMB 受信)\" new enable=Yes"
 end
 ```
 
@@ -273,7 +278,7 @@ $ knife node show <node name>
 以下のコマンドを実行して、node上でchef-clientを実行します。
 
 ```bash
-$ knife winrm <node up> "chef-client" -m -x Administrator -P 'password'
+$ knife winrm <node up> "chef-client" -m -x administrator -P 'password'
 ```
 
 以下のコマンドを実行して、chef-clientの実行結果を確認します。
