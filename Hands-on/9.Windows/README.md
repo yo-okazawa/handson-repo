@@ -16,6 +16,14 @@
 - 2-2.COOKBOOK[windows-fileserver]を作成
 - 2-3.recipeを適用する
 
+## 3.PowerShell DSC
+
+- 3-1.特徴
+- 3-2.用語
+- 3-3.環境準備
+- 3-4.WindowsServer上でPowerShell DSCを実行する
+- 3-5.ChefからPowerShell DSCを実行する
+
 ---
 
 ## 1.Windows向けresource
@@ -292,3 +300,197 @@ $ knife runs show <run id>
 ChefServerのWEB-UI上でも実行結果を確認して下さい。
 
 ローカル端末からもファイル共有サーバにSMBアクセスが出来るかを確認して下さい。
+
+---
+
+## 3.PowerShell DSC
+
+---
+
+## 3-1.特徴
+- Infrastructure as Code
+- Declarative Syntax(宣言的構文)
+- 冪等性
+- クライアントレス(PowerShellがあれば動く)
+- サーバ/クライアント構成はプッシュ型とプル型両方に対応
+
+---
+
+## 3-2.用語
+
+- Resource(Chefのresourceに相当)  
+> 標準では12種類のresourceが利用可能(ビルトインリソース)  
+> 拡張resourceも利用することが可能（カスタムリソース）  
+> 拡張resourceを独自に作成することも可能
+
+- Configuration(Chefのrecipeに相当)
+
+---
+
+## 3-3.環境準備
+
+powershell DSCはWindows Management Framework 4.0から追加された機能です。
+
+WindowsServer2012R2とWindows8.1から標準でWMF4.0が搭載されています。
+
+Windowsインスタンスにリモートデスクトップで接続して、WMFのバージョンを確認します。
+
+- ローカル端末で以下のコマンドを実行してポートフォワードの設定をします。
+
+```bash
+$ ssh -L <local port>:<Windows IP>:3389 -l root <workstation IP>
+```
+
+- リモートデスクトップでWindowsインスタンスにログインします。(localhost:<local port>)
+
+- Windowsインスタンスでpowershellを立ち上げて以下のコマンドを実行します。
+
+```
+> $PSVersionTable
+```
+
+3.0と表示された場合はWMF4.0をインストールする必要があります。
+
+- WMF4.0をインストールします。Windowsインスタンス上でインストーラをダウンロードして、インストールして下さい。
+
+> インストーラは以下のURLからダウンロード出来ます。  
+> http://119.81.145.242/packages/chef/packages/Windows8-RT-KB2799888-x64.msu  
+> http://www.microsoft.com/ja-jp/download/details.aspx?id=40855
+
+WMF4.0をインストールするには.NET FrameWork4.5がインストールされている必要があります。
+
+- .NET FrameWorkのバージョンを確認します。
+
+- Windowsインスタンス上でサーバーマネージャーを起動し、『ローカルサーバー』の『役割と機能』欄に".net"と入力して、.NET FrameWork4.5が表示されれば、OKです。
+
+> 表示されない場合には、『サーバーマネージャー』⇒『ダッシュボード』⇒『役割の機能と追加』から追加して下さい。
+
+WMF4.0のインストールが完了したら、再度powershell上で"$PSVersionTable"を実行して、バージョンを確認します。
+
+---
+
+## 3-5.WindowsServer上でPowerShell DSCを実行する
+
+- HOMEディレクトリ配下にpsというフォルダを作成して、psフォルダ配下にtest.ps1というファイルを作成します。
+
+```PowerShell
+# Windowsインスタンスのpowershell ISE上で実行
+> cd ~/
+> New-Item -ItemType Directory ps
+> cd ps
+> New-Item -ItemType file test.ps1
+> Get-ChildItem
+```
+
+test.ps1を編集して以下のように変更します。
+
+```PowerShell
+Configuration "WebServer"
+{
+
+  Node "localhost"
+  {
+    WindowsFeature InstallWebServer
+    {
+      Ensure = "Present"
+      Name  = "Web-Server"
+    }
+  }
+}
+
+WebServer -OutputPath . -Node localhost
+Start-DscConfiguration -Path .\WebServer -Wait -Verbose
+```
+
+- 作成したpowershellスクリプトを実行します。
+
+```PowerShell
+> ./test.ps1
+```
+
+> 『このシステムではスクリプトの実行が無効~~』のエラーメッセージが出力された場合には、以下のコマンドで実行権限を変更します。
+
+```PowerShell
+# 現在の設定を確認
+> Get-ExecutionPolicy
+# スクリプトの実行権限をRemoteSignedに変更
+> Set-ExecutionPolicy = RemoteSigned
+:Y
+# 変更後の設定を確認
+> Get-ExecutionPolicy
+```
+
+- サーバーマネージャーから、IISがインストールされたことを確認して下さい。
+
+- もう一度test.ps1を実行して、冪等性が保障されていることを確認します。
+
+```PowerShell
+> ./test.ps1
+```
+
+> IIS(Web-Server)は既にインストールされているため、インストールされません。
+
+次項でChefからIISをインストールするため、一旦アンインストールしておきます。
+
+- test.ps1のEnsure = の値をPresentからAbsentに変更して実行します。
+
+test.ps1を編集して以下のように変更します。
+
+```PowerShell
+Configuration "WebServer"
+{
+
+  Node "localhost"
+  {
+    WindowsFeature InstallWebServer
+    {
+      Ensure = "Absent"
+      Name  = "Web-Server"
+    }
+  }
+}
+
+WebServer -OutputPath . -Node localhost
+Start-DscConfiguration -Path .\WebServer -Wait -Verbose
+```
+
+- 変更したtest.ps1を実行します。
+```PowerShell
+> ./test.ps1
+```
+
+---
+
+## 3-6.ChefからPowerShell DSCを実行する
+
+Chefのresource dsc_scriptを使用してIIS(WebServer)をインストールします。
+
+- 以下のコマンドを実行して、COOKBOOKを作成します。
+
+```bash
+# workstationのchef-repo上で実施
+$ knife cookbook create iis-<username> -o cookbooks
+```
+
+recipes/default.rbを以下のように編集します。
+
+```ruby
+dsc_script 'install IIS' do
+  code <<-EOH
+    WindowsFeature InstallWebServer
+    {
+      Ensure = "Present"
+      Name  = "Web-Server"
+    }
+  EOH
+end
+```
+
+COOKBOOK[iis]をnodeに適用します。
+
+```bash
+$ knife cookbook upload <cookbook name>
+$ knife node run_list add <node name> <cookbook name>
+$ knife winrm <node ip> "chef-client" -m -x administrator -P <password>
+```
+
