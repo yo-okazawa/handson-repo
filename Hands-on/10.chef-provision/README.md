@@ -6,6 +6,8 @@
 
 ### 1-3.chef-provisioningのresource
 
+### 1-4.chef-provisioningを使ってみる
+
 ---
 
 ## 1.chef-provisioning
@@ -132,4 +134,100 @@ end
 machine "x" do
   from_image "example_image"
 end
+```
+
+---
+
+### 1-4.chef-provisioningを使ってみる
+
+chef-provisioningを実際に動作させてみましょう。今回は既に立ち上がっているnodeに対してchef-provisioningを使用するため、ドライバはchef-provisioning-sshを使用します。
+
+今回はWorkstationサーバ上でchef-provisioningを動作させて、複数のlinuxインスタンスに対して操作を行います。
+
+Workstationサーバの/home/<username>/chef-repoにprovision.rbを作成します。
+
+```ruby
+cd /home/<username>/chef-repo
+vi provision.rb
+```
+provision.rbの内容は以下の通りです。
+
+***provision.rb***
+
+```ruby
+# chef-provisioningをロード
+require 'chef/provisioning'
+# chef-provisioning-sshをロード
+require 'chef/provisioning/ssh_driver'
+# ドライバの指定
+with_driver 'ssh'
+
+# host01のIPアドレスを記載
+host01 = "<ipaddress>"
+# host02のIPアドレスを記載
+host02 = "<ipaddress>"
+
+# host01をmachineとして登録
+machine "host01" do
+  machine_options :transport_options => {
+    :ip_address => host01,
+    :username => 'root',
+    :ssh_options => {
+      :keys => ['~/.ssh/id_rsa']
+    }
+  }
+  action :allocate
+end
+
+# host01をmachineとして登録
+machine "host02" do
+  machine_options :transport_options => {
+    :ip_address => host02,
+    :username => 'root',
+    :ssh_options => {
+      :keys => ['~/.ssh/id_rsa']
+    }
+  }
+  action :allocate
+end
+
+%w{ host01 host02 }.each do | host |
+
+  # machine_fileリソースを使用してnodeにchef-clientのパッケージを転送
+  machine_file "/tmp/chef-12.2.1-1.el6.x86_64.rpm" do
+    machine host
+    local_path "/root/chef-12.2.1-1.el6.x86_64.rpm"
+    action :upload
+  end
+  # machine_executeリソースを使用して、chef-clientをインストールする
+  machine_execute "install chef-client" do
+    command "[ `rpm -qa | grep chef-12.2.1 | wc -l` -eq 0 ] && rpm -i /tmp/chef-12.2.1-1.el6.x86_64.rpm || exit 0"
+    machine host
+    action :run
+  end
+  
+  # nodeをconvergeする(chef-client実行)
+  machine host do
+    # recipeを適用する場合は以下のように書く
+    # recipe 'example::default'
+    action :converge
+  end
+  
+end
+```
+
+以下のコマンドを実行してchef-provisioningを実行します。
+
+```bash
+$ chef-client -z provision.rb
+```
+
+> workstation上でchef-zeroが起動 -> machine allocate -> インストーラ転送 -> chef-clientインストール -> machine converge していることが出力から確認できます。
+
+chef-provisioning実行後、カレントディレクトリにnodesディレクトリが作成され、その配下にそれぞれのnodeのnodeオブジェクトjson形式のファイルで格納されます。
+
+```bash
+$ cd nodes
+$ cat host01.json
+$ cat host02.json
 ```
